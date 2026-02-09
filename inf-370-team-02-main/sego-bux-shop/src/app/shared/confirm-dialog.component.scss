@@ -1,0 +1,58 @@
+@use '../../styles/variables' as vars;
+
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.dialog {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  text-align: center;
+
+  p {
+    margin: 0 0 1.3rem;
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    button {
+      flex: 1;
+      padding: 0.6rem 0;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .btn-cancel {
+      background: #eee;
+      color: #555;
+    }
+
+    .btn-ok {
+      background: vars.$primary-pink;
+      color: #fff;
+    }
+
+    button:hover {
+      transform: translateY(-1px) scale(1.02);
+    }
+  }
+}

@@ -1,0 +1,72 @@
+<div class="form-container">
+  <h2>Sign In</h2>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
+    <!-- Identifier -->
+    <label>Email or Phone Number</label>
+    <input
+      formControlName="identifier"
+      type="text"
+      class="form-control"
+      [attr.inputmode]="mode === 'phone' ? 'numeric' : 'email'"
+      [attr.maxlength]="mode === 'phone' ? 10 : null"
+      [placeholder]="mode === 'phone' ? 'e.g. 0123456789' : 'e.g. name@example.com'"
+      [class.is-invalid]="loginForm.get('identifier')?.invalid && loginForm.get('identifier')?.touched"
+    />
+
+    <!-- Phone messages -->
+    <ng-container *ngIf="mode === 'phone'">
+      <small class="field-error" *ngIf="err('identifier','required')">
+        Phone number is required.
+      </small>
+      <small class="field-error" *ngIf="!err('identifier','required') && err('identifier','pattern')">
+        Phone number must contain digits only.
+      </small>
+      <small
+        class="field-error"
+        *ngIf="
+          !err('identifier','required') &&
+          !err('identifier','pattern') &&
+          (err('identifier','minlength') || err('identifier','maxlength'))
+        "
+      >
+        Phone number must be <strong>exactly 10 digits</strong> (e.g. <strong>0123456789</strong>).
+      </small>
+    </ng-container>
+
+    <!-- Email messages -->
+    <ng-container *ngIf="mode === 'email'">
+      <small class="field-error" *ngIf="err('identifier','required')">
+        Email is required.
+      </small>
+      <small class="field-error"
+        *ngIf="!err('identifier','required') && err('identifier','email') && (loginForm.get('identifier')?.value || '').length > 0">
+        Please use a valid email address (e.g. <strong>name&#64;example.com</strong>).
+      </small>
+    </ng-container>
+
+    <!-- Password -->
+    <label>Password</label>
+    <input
+      formControlName="password"
+      type="password"
+      class="form-control"
+      [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+    />
+    <small class="field-error" *ngIf="err('password','required')">
+      Password is required.
+    </small>
+
+    <!-- Server error -->
+    <div *ngIf="loginError" class="alert alert-danger mt-2">
+      {{ loginError }}
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="isLoading || loginForm.invalid">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+      Login
+    </button>
+
+    <a [routerLink]="['/auth/forgot-password']" class="forgot-link">Forgot Password?</a>
+  </form>
+</div>

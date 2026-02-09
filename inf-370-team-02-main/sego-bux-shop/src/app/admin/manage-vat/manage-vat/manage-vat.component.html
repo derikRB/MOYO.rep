@@ -1,0 +1,107 @@
+<!-- src/app/manage-vat/manage-vat.component.html -->
+<div class="manage-vat">
+  <h2>Manage VAT Rates</h2>
+
+  <!-- Pink search toolbar + Clear -->
+  <div class="vat-toolbar">
+    <div class="left">
+      <input
+        class="search-input"
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChanged()"
+        placeholder="Search by name, %, status or date…" />
+    </div>
+    <div class="right">
+      <button class="clear-btn" type="button" (click)="searchTerm=''; onSearchChanged()">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter chips -->
+  <div class="filters">
+    <div class="filter">
+      <label>Status</label>
+      <div class="btns">
+        <button (click)="setStatusFilter('All')"      [class.active]="statusFilter==='All'">All</button>
+        <button (click)="setStatusFilter('Active')"   [class.active]="statusFilter==='Active'">Active</button>
+        <button (click)="setStatusFilter('Inactive')" [class.active]="statusFilter==='Inactive'">Inactive</button>
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="create()" class="vat-form">
+    <div class="form-group">
+      <label for="vatName">Name</label>
+      <input id="vatName" formControlName="vatName" required />
+      <div class="error-message"
+           *ngIf="form.get('vatName')?.invalid && form.get('vatName')?.touched">
+        Name is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="percentage">Percentage (%)</label>
+      <input id="percentage"
+             type="number"
+             min="0" max="100" step="0.01"
+             formControlName="percentage"
+             required />
+      <div class="error-message" *ngIf="percentageCtrl.touched && percentageCtrl.invalid">
+        <span *ngIf="percentageCtrl.errors?.['required']">Percentage is required.</span>
+        <span *ngIf="percentageCtrl.errors?.['min']">Cannot be negative.</span>
+        <span *ngIf="percentageCtrl.errors?.['max']">Cannot exceed 100%.</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="effectiveDate">Effective Date</label>
+      <input id="effectiveDate"
+             type="date"
+             formControlName="effectiveDate"
+             required />
+      <div class="error-message"
+           *ngIf="effectiveDateCtrl.hasError('duplicateDate') && effectiveDateCtrl.touched">
+        A VAT rate for this date already exists.
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-pink" [disabled]="loading || form.invalid">
+        Add VAT
+      </button>
+    </div>
+  </form>
+
+  <div class="vat-table-container">
+    <div class="vat-table-header">
+      <div class="cell name">Name</div>
+      <div class="cell pct">%</div>
+      <div class="cell eff">Effective</div>
+      <div class="cell status">Status</div>
+      <div class="cell created">Created</div>
+      <div class="cell actions">Actions</div>
+    </div>
+
+    <div *ngFor="let v of filteredVats" class="vat-table-row">
+      <div class="cell name">{{ v.vatName }}</div>
+      <div class="cell pct">{{ v.percentage | number:'1.2-2' }}%</div>
+      <div class="cell eff">{{ v.effectiveDate | date:'MMM d, y' }}</div>
+      <div class="cell status">
+        <span [ngClass]="{
+          'badge-active':   v.status === 'Active',
+          'badge-inactive': v.status !== 'Active'
+        }">{{ v.status }}</span>
+      </div>
+      <div class="cell created">{{ v.effectiveDate | date:'shortDate' }}</div>
+      <div class="cell actions">
+        <button *ngIf="v.status !== 'Active'"
+                class="btn btn-pink"
+                (click)="activate(v.vatId)">
+          Activate
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

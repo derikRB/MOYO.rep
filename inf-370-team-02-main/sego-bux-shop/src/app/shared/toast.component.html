@@ -1,0 +1,6 @@
+<!-- src/app/shared/toast.component.html -->
+<div class="toast">
+  <img *ngIf="toast.imageUrl" [src]="toast.imageUrl" class="thumb" />
+  <div class="message">{{ toast.message }}</div>
+  <button class="close-btn" (click)="close()">×</button>
+</div>

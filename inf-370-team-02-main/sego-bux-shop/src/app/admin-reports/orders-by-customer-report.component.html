@@ -1,0 +1,28 @@
+<!-- <div id="orders-by-customer-container">
+  <app-report-branding-header [date]="date" [userName]="userName"></app-report-branding-header>
+  <h2>Orders by Customer</h2>
+  <div *ngFor="let grp of groups">
+    <h4>{{ grp.customerName }}</h4>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Order ID</th><th>Date</th><th>Status</th><th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let o of grp.orders">
+          <td>{{ o.orderID }}</td>
+          <td>{{ o.orderDate|date:'shortDate' }}</td>
+          <td>{{ o.status }}</td>
+          <td>{{ o.total | number:'1.2-2' }}</td>
+        </tr>
+        <tr class="table-secondary">
+          <td colspan="3"><strong>Subtotal for {{grp.customerName}}</strong></td>
+          <td><strong>{{ grp.subtotal | number:'1.2-2' }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mt-2"><strong>Grand Total:</strong> {{ grandTotal | number:'1.2-2' }}</p>
+</div>
+<button class="btn btn-primary" (click)="exportPdf()">Export PDF</button> -->

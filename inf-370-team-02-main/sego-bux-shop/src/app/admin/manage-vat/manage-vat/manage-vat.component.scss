@@ -1,0 +1,174 @@
+/* src/app/manage-vat/manage-vat.component.scss */
+@use "sass:color";
+@use '../styles/variables' as *;
+
+.manage-vat {
+  padding: 1.5rem;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px #e91e6340;
+  max-width: 700px;
+  margin: auto;
+
+  h2 {
+    color: $primary-pink;
+    text-align: center;
+    margin-bottom: 1.2rem;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  /* ---- Pink search toolbar + chips (matches your other screens) ---- */
+  .vat-toolbar{
+    display:flex; gap:.75rem; align-items:center; justify-content:space-between;
+    margin: 0 0 1rem 0;
+
+    .left{ flex:1 1 auto; }
+    .right{ flex:0 0 auto; }
+
+    .search-input{
+      width:100%; padding:.9rem 1.1rem; border-radius:14px;
+      border:1.6px solid #ffe4f1; background:#fef6fb; outline:none; font-size:1rem;
+      box-shadow:0 2px 8px #e91e6314 inset;
+      &::placeholder{ color:#9a8b96; }
+      &:focus{ border-color:$primary-pink; background:#fff; box-shadow:0 0 0 3px #ffe4f1; }
+    }
+
+    .clear-btn{
+      border:none; border-radius:12px; padding:.65rem 1.0rem;
+      background:#f6edf4; color:#222; font-weight:800;
+      box-shadow:0 2px 6px rgba(233,30,99,.12);
+      cursor:pointer; transition:background-color .18s;
+      &:hover{ background: color.adjust(#f6edf4, $lightness:-6%); }
+    }
+  }
+
+  .filters{ display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin-bottom: .6rem; }
+  .filter{ display:flex; align-items:center; gap:.6rem;
+    label{ font-weight:700; color:$primary-pink; }
+    .btns{ display:flex; gap:.4rem; }
+    .btns button{
+      border:none; background:#fde5f8; color:$primary-pink; font-weight:700; border-radius:8px; padding:.45em .9em; cursor:pointer;
+      &.active,&:hover{ background:$primary-pink; color:#fff; }
+    }
+  }
+
+  .vat-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    .form-group {
+      flex: 1 1 30%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+
+      label {
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+      }
+
+      input {
+        padding: 0.6rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+        &:focus { border-color: $primary-pink; outline: none; }
+        &.ng-invalid.ng-touched { border-color: #e91e63; box-shadow: 0 0 0 2px rgba(233,30,99,.10); }
+      }
+
+      .error-message {
+        color: #e91e63;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: flex-end;
+
+      .btn {
+        background: $primary-pink;
+        color: $white;
+        border: none;
+        padding: 0.7rem 1.4rem;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        &:hover { background: color.adjust($primary-pink, $lightness: -12%); }
+      }
+    }
+  }
+
+  .vat-table-container {
+    margin-top: 1.5rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px #e91e6330;
+
+    .vat-table-header,
+    .vat-table-row {
+      display: grid;
+      grid-template-columns: 2.2fr 0.7fr 1.4fr 1fr 1.1fr 1fr;
+      align-items: center;
+      padding: 0 1.2rem;
+      min-height: 48px;
+    }
+
+    .vat-table-header {
+      background: $primary-pink;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.14rem;
+      .cell { padding: 18px 0 8px 0; }
+    }
+
+    .vat-table-row {
+      background: #fff;
+      border-bottom: 1px solid #fae6f0;
+      transition: background 0.16s;
+      &:hover { background: #fff2fa; }
+
+      .cell {
+        padding: 11px 0;
+        font-size: 1.03rem;
+        display: flex;
+        align-items: center;
+
+        &.actions .btn {
+          background: $primary-pink;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          padding: 0.45rem 1.15rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background 0.18s;
+          &:hover { background: color.adjust($primary-pink, $lightness: -13%); }
+        }
+      }
+    }
+  }
+
+  .badge-active {
+    background: #e91e63;
+    color: #fff;
+    padding: 0.25rem 0.7rem;
+    border-radius: 14px;
+    font-size: 0.96em;
+    font-weight: 500;
+  }
+
+  .badge-inactive {
+    background: #f2b0c8;
+    color: #ad2154;
+    padding: 0.25rem 0.7rem;
+    border-radius: 14px;
+    font-size: 0.96em;
+    font-weight: 500;
+  }
+}

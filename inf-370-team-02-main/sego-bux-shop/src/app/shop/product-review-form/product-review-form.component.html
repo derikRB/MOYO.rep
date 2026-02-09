@@ -1,0 +1,38 @@
+<div class="review-form-container">
+  <h2>Write a Product Review</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>
+      Rating:
+      <select formControlName="rating">
+        <option [ngValue]="null">Select</option>
+        <option *ngFor="let r of [1,2,3,4,5]" [value]="r">{{r}} ★</option>
+      </select>
+    </label>
+    <label>
+      Title:
+      <input formControlName="reviewTitle" placeholder="Optional summary" />
+    </label>
+    <label>
+      Your Review:
+      <textarea formControlName="reviewText" rows="4"></textarea>
+    </label>
+    <label>
+      Photo (optional):
+      <input type="file" (change)="onFileChange($event)" />
+    </label>
+    <div class="buttons">
+      <button type="button" (click)="openConfirm()" [disabled]="form.invalid || submitting">Submit</button>
+      <button type="button" (click)="form.reset()" style="background:#ccc;color:#222;">Clear</button>
+    </div>
+    <div *ngIf="alreadyReviewed" class="alert">
+      You have already reviewed this product for this order.
+    </div>
+  </form>
+
+  <confirm-dialog
+    *ngIf="confirming"
+    [message]="'Are you sure you want to submit this review?'"
+    (confirm)="confirmSubmit()"
+    (cancel)="closeConfirm()">
+  </confirm-dialog>
+</div>

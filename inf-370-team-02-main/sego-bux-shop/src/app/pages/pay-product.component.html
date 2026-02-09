@@ -1,0 +1,21 @@
+<p>pay-product works!</p>
+<div class="pay-product-page">
+  <h2>{{ product?.productName }}</h2>
+  <img [src]="product?.imageUrl || 'assets/logo.png'" width="120" />
+
+  <p><b>Description:</b> {{ product?.description }}</p>
+  <p><b>Price:</b> R{{ product?.price | number:'1.2-2' }}</p>
+
+  <form [formGroup]="form" (ngSubmit)="pay()">
+    <input formControlName="name" class="form-control" placeholder="Your Name" />
+    <input formControlName="email" class="form-control" placeholder="Your Email" />
+
+    <button type="submit" class="pay-btn" [disabled]="form.invalid">
+      Pay Now
+    </button>
+  </form>
+
+  <div *ngIf="paid" class="success-msg">
+    ✅ Payment successful! Thank you.
+  </div>
+</div>

@@ -1,0 +1,86 @@
+<div class="manage-feedbacks">
+  <h2>Customer Feedback</h2>
+
+  <div class="controls">
+    <!-- Pink toolbar -->
+    <div class="fb-toolbar">
+      <div class="left">
+        <input
+          class="search-input"
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="search()"
+          placeholder="Search by comment, user, or order…" />
+      </div>
+      <div class="right">
+        <button class="clear-btn" type="button" (click)="searchTerm=''; search()">Clear</button>
+        <button class="export-btn" type="button" (click)="exportExcel()">
+          <i class="fa fa-download"></i> Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filters">
+      <div class="filter">
+        <label>Rating</label>
+        <div class="btns">
+          <button (click)="setRatingFilter('All')" [class.active]="ratingFilter==='All'">All</button>
+          <button (click)="setRatingFilter('5')" [class.active]="ratingFilter==='5'">5★</button>
+          <button (click)="setRatingFilter('4')" [class.active]="ratingFilter==='4'">4★</button>
+          <button (click)="setRatingFilter('3')" [class.active]="ratingFilter==='3'">3★</button>
+          <button (click)="setRatingFilter('2')" [class.active]="ratingFilter==='2'">2★</button>
+          <button (click)="setRatingFilter('1')" [class.active]="ratingFilter==='1'">1★</button>
+        </div>
+      </div>
+
+      <div class="filter">
+        <label>Recommend</label>
+        <div class="btns">
+          <button (click)="setRecommendFilter('All')" [class.active]="recommendFilter==='All'">All</button>
+          <button (click)="setRecommendFilter('Yes')" [class.active]="recommendFilter==='Yes'">Yes</button>
+          <button (click)="setRecommendFilter('No')" [class.active]="recommendFilter==='No'">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Single horizontal scroll container -->
+  <div class="scroll-wrap" *ngIf="!loading">
+    <div class="table header grid-row" role="row">
+      <div class="cell">Feedback #</div>
+      <div class="cell">User</div>
+      <div class="cell">Order</div>
+      <div class="cell rating-col">Rating</div>
+      <div class="cell">Recommend</div>
+      <div class="cell">Submitted</div>
+      <div class="cell comment">Comments</div>
+    </div>
+
+    <div *ngIf="pageRows.length===0" class="no-data">No feedback found.</div>
+
+    <div class="table row grid-row" *ngFor="let r of pageRows" role="row">
+      <div class="cell">#{{ r.feedbackID }}</div>
+      <div class="cell">{{ displayUser(r) }} (#{{ r.userID }})</div>
+      <div class="cell">#{{ r.orderID }}</div>
+      <div class="cell rating-col stars">
+        <ng-container *ngFor="let filled of stars(r.rating)">
+          <i class="fa fa-star" [class.faded]="!filled"></i>
+        </ng-container>
+      </div>
+      <div class="cell">
+        <span class="pill" [class.yes]="r.recommend" [class.no]="!r.recommend">
+          {{ r.recommend ? 'Yes' : 'No' }}
+        </span>
+      </div>
+      <div class="cell">{{ r.submittedDate | date:'short' }}</div>
+      <div class="cell comment">{{ r.comments }}</div>
+    </div>
+  </div>
+
+  <div class="pager" *ngIf="pageCount > 1">
+    <button class="page-btn" (click)="goPrev()" [disabled]="page===1">Prev</button>
+    <button class="page-btn" *ngFor="let n of pageNumbers" [class.active]="n===page" (click)="goPage(n)">{{ n }}</button>
+    <button class="page-btn" (click)="goNext()" [disabled]="page===pageCount">Next</button>
+  </div>
+</div>

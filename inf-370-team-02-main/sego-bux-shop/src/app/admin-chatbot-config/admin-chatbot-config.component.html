@@ -1,0 +1,77 @@
+<div class="chatbot-config">
+  <h2>Chatbot Contact & Shipping Settings</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()" [class.was-submitted]="submitted">
+    <!-- Contact -->
+    <div class="form-group">
+      <label for="whatsAppNumber">WhatsApp Number</label>
+      <input id="whatsAppNumber" formControlName="whatsAppNumber" />
+      <small class="field-error"
+             *ngIf="form.get('whatsAppNumber')?.invalid && (form.get('whatsAppNumber')?.touched || submitted)">
+        WhatsApp number is required.
+      </small>
+    </div>
+
+    <div class="form-group mt-2">
+      <label for="supportEmail">Support Email</label>
+      <input id="supportEmail" formControlName="supportEmail" />
+      <small class="field-error"
+             *ngIf="form.get('supportEmail')?.hasError('required') && (form.get('supportEmail')?.touched || submitted)">
+        Email is required.
+      </small>
+      <small class="field-error"
+             *ngIf="form.get('supportEmail')?.hasError('email') && (form.get('supportEmail')?.touched || submitted)">
+        Enter a valid email address.
+      </small>
+    </div>
+
+    <div class="setting-divider"></div>
+    <h3 class="subhead">Shipping Policy</h3>
+
+    <div class="form-group">
+      <label for="originAddress">Origin / Central Office Address</label>
+      <input id="originAddress"
+             formControlName="originAddress"
+             placeholder="e.g. 1078 Burnett St, Hatfield, Pretoria, 0028" />
+      <!-- optional → no required error -->
+    </div>
+
+    <div class="form-row-2">
+      <div class="form-group">
+        <label for="thresholdKm">Threshold (km)</label>
+        <input id="thresholdKm" type="number" formControlName="thresholdKm" />
+        <small class="field-error"
+               *ngIf="form.get('thresholdKm')?.hasError('required') && (form.get('thresholdKm')?.touched || submitted)">
+          Threshold is required.
+        </small>
+        <small class="field-error"
+               *ngIf="form.get('thresholdKm')?.hasError('min') && (form.get('thresholdKm')?.touched || submitted)">
+          Threshold must be 0 or greater.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="flatShippingFee">Flat Shipping Fee (ZAR)</label>
+        <input id="flatShippingFee" type="number" formControlName="flatShippingFee" />
+        <small class="field-error"
+               *ngIf="form.get('flatShippingFee')?.hasError('required') && (form.get('flatShippingFee')?.touched || submitted)">
+          Flat shipping fee is required.
+        </small>
+        <small class="field-error"
+               *ngIf="form.get('flatShippingFee')?.hasError('min') && (form.get('flatShippingFee')?.touched || submitted)">
+          Flat shipping fee must be 0 or greater.
+        </small>
+      </div>
+    </div>
+
+    <p class="hint">
+      Rule: If the customer distance from <b>Origin</b> is greater than <b>Threshold</b>,
+      we use the <b>Flat Shipping Fee</b> and method is <b>Courier</b>.
+      Otherwise, shipping is free and method is <b>Company Delivery</b>.
+    </p>
+
+    <div class="form-actions mt-4">
+      <button type="submit" class="btn-pink" [disabled]="form.invalid">Save</button>
+    </div>
+  </form>
+</div>

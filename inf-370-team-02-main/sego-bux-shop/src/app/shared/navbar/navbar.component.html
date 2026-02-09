@@ -1,0 +1,85 @@
+<nav class="navbar">
+  <div class="logo">
+    <img src="assets/logo.png" alt="Sego & Bux" class="logo-img" />
+  </div>
+
+  <div class="hamburger" (click)="toggleMobileMenu()">
+    <i class="fas" [class.fa-bars]="!mobileMenuOpen" [class.fa-times]="mobileMenuOpen"></i>
+  </div>
+
+  <ul class="nav" [class.open]="mobileMenuOpen">
+    <li><a routerLink="/" (click)="closeMobileMenu()">Home</a></li>
+    <li><a routerLink="/products" (click)="closeMobileMenu()">Shop</a></li>
+    <li><a routerLink="/contact" (click)="closeMobileMenu()">Contact</a></li>
+    <li *ngIf="isEmployeeOrAdmin"><a routerLink="/admin" (click)="closeMobileMenu()">Dashboard</a></li>
+  </ul>
+
+  <div class="right-group">
+    <div class="cart-icon-wrapper" (click)="navigateToCart()">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-count" *ngIf="cartCount > 0">{{ cartCount }}</span>
+    </div>
+
+    <!-- Account Dropdown -->
+    <div class="account-dropdown">
+      <span class="drop-toggle" (click)="toggleDropdown()">
+        <i class="fas fa-user-circle"></i> Account <i class="fas fa-caret-down"></i>
+      </span>
+<ul class="dropdown-content" *ngIf="dropdownOpen">
+  <!-- Customer options -->
+  <ng-container *ngIf="isLoggedIn && isCustomer">
+    <li>
+      <a (click)="navigateToCart()">
+        <i class="fas fa-shopping-cart"></i> Cart
+      </a>
+    </li>
+    <li>
+      <a (click)="navigateToProfile()">
+        <i class="fas fa-user"></i> My Profile
+      </a>
+    </li>
+    <li>
+      <a (click)="navigateToOrderHistory()">
+        <i class="fas fa-box"></i> Order History
+      </a>
+    </li>
+    <li>
+      <a (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+    </li>
+  </ng-container>
+  <!-- Employee/Admin options -->
+  <ng-container *ngIf="isLoggedIn && isEmployeeOrAdmin">
+    <li>
+      <a routerLink="/admin" (click)="closeDropdown()">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+      </a>
+    </li>
+    <li>
+      <a (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+    </li>
+  </ng-container>
+  <!-- Not logged in -->
+  <ng-container *ngIf="!isLoggedIn">
+    <li>
+      <a routerLink="/login" (click)="closeDropdown()">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </a>
+    </li>
+    <li>
+      <a routerLink="/register" (click)="closeDropdown()">
+        <i class="fas fa-user-plus"></i> Register
+      </a>
+    </li>
+  </ng-container>
+</ul>
+
+    </div>
+  </div>
+
+  <!-- MOBILE SLIDE MENU OVERLAY -->
+  <div class="mobile-menu" *ngIf="mobileMenuOpen" (click)="closeMobileMenu()"></div>
+</nav>

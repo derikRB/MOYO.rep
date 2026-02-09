@@ -1,0 +1,81 @@
+{
+  "dashboard": [
+    "Admin",
+    "Manager",
+    "Employee"
+  ],
+  "reports": [
+    "Admin",
+    "Manager",
+    "Employee"
+  ],
+  "stock": [
+    "Admin",
+    "Manager",
+    "Employee"
+  ],
+  "products": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ],
+  "productTypes": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ],
+  "categories": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ],
+  "employees": [
+    "Admin",
+    "Manager",
+    "Employee"
+  ],
+  "orders": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ],
+  "productReviews": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ],
+  "customerFeedback": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ],
+  "templates": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ],
+  "vat": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ],
+  "faqs": [
+    "Admin",
+    "Manager",
+    "Employee"
+  ],
+  "chatbotConfig": [
+    "Admin",
+    "Manager",
+    "Employee",
+    "Customer"
+  ]
+}

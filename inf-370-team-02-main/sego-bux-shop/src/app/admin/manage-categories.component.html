@@ -1,0 +1,125 @@
+<div class="manage-categories">
+
+  <h2>Manage Categories</h2>
+
+  <!-- Search bar -->
+  <div class="cats-toolbar">
+    <div class="left">
+      <input
+        class="search-input"
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChanged()"
+        placeholder="Search by category or description…" />
+    </div>
+    <div class="right">
+      <button class="clear-btn" type="button" (click)="searchTerm=''; onSearchChanged()">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <form
+    #formRef="ngForm"
+    (ngSubmit)="submitCategory(formRef)"
+    class="category-form-stacked"
+    [class.was-submitted]="catSubmitted"
+  >
+    <div #catFormContainer class="anchor"></div>
+
+    <div class="form-group" #catFormBox>
+      <label for="categoryName">Category Name</label>
+      <input id="categoryName"
+             #categoryNameInput
+             name="categoryName"
+             type="text"
+             class="form-control"
+             required
+             [(ngModel)]="form.categoryName"
+             #categoryName="ngModel" />
+      <small class="field-error"
+             *ngIf="categoryName.invalid && (categoryName.touched || catSubmitted)">
+        Category name is required.
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input id="description"
+             name="description"
+             type="text"
+             class="form-control"
+             required
+             [(ngModel)]="form.description"
+             #description="ngModel" />
+      <small class="field-error"
+             *ngIf="description.invalid && (description.touched || catSubmitted)">
+        Description is required.
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit" [disabled]="formRef.invalid">
+        {{ isEditMode ? 'Update Category' : 'Add Category' }}
+      </button>
+      <button *ngIf="isEditMode"
+              type="button"
+              class="btn btn-secondary"
+              (click)="resetForm()">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <hr />
+
+  <!-- Table -->
+  <div class="categories-table-container">
+    <div class="categories-table-header">
+      <div class="cell name">Category</div>
+      <div class="cell desc">Description</div>
+      <div class="cell actions">Actions</div>
+    </div>
+
+    <div *ngFor="let c of filteredCategories | paginate:page:pageSize; trackBy: trackByCategoryId"
+         class="categories-table-row">
+      <div class="cell name">{{ c.categoryName }}</div>
+      <div class="cell desc">{{ c.description }}</div>
+      <div class="cell actions">
+        <button type="button"
+                class="icon-btn"
+                title="Edit"
+                (click)="editCategory(c)">
+          <svg width="22" height="22" fill="none" stroke="#e91e63" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 17.25V21h3.75l11-11.02-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+        <button type="button"
+                class="icon-btn"
+                title="Delete"
+                (click)="promptDeleteCategory(c)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e91e63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3-3h4a2 2 0 0 1 2 2v1H7V5a2 2 0 0 1 2-2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-pagination
+    [page]="page"
+    [totalPages]="totalPages"
+    (pageChange)="page = $event">
+  </app-pagination>
+
+  <!-- Confirm dialog -->
+  <confirm-dialog
+    *ngIf="confirmingDeleteCategory"
+    [message]="'Delete “' + toDeleteCategory?.categoryName + '”?'"
+    (confirm)="onDeleteCategoryConfirmed()
+"
+    (cancel)="onDeleteCategoryCanceled()">
+  </confirm-dialog>
+</div>

@@ -1,0 +1,25 @@
+<!-- Toggle Button -->
+<button class="chatbot-toggle" (click)="toggleWidget()">
+  <i class="fas" [ngClass]="showWidget ? 'fa-times' : 'fa-comment-dots'"></i>
+</button>
+
+<!-- Chat Panel -->
+<div class="chatbot-widget" *ngIf="showWidget">
+  <div class="chatbot-header">Need Help?</div>
+
+  <!-- Human Help Section -->
+  <div class="chatbot-footer" *ngIf="config">
+    <div class="footer-content">
+      <!-- Optional logo if you have one -->
+      <!-- <img src="assets/logo.png" alt="Logo" class="footer-logo" /> -->
+      <div class="footer-text-wrapper">
+        <p class="footer-text">Talk to a human:</p>
+        <div class="footer-links">
+          <a [href]="'https://wa.me/' + config.whatsAppNumber" target="_blank">WhatsApp</a>
+          <span>|</span>
+          <a [href]="'mailto:' + config.supportEmail">Email</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

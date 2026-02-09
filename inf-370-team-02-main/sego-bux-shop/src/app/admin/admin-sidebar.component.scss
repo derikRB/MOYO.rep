@@ -1,0 +1,150 @@
+@use '../../styles/variables' as *;
+
+/* Lock body scroll when overlay is visible */
+body.no-scroll {
+  overflow: hidden;
+  position: fixed;     /* prevent iOS rubber band */
+  width: 100%;
+}
+
+/* Fullscreen, dimmed overlay under the sidebar (mobile) */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  z-index: 2001; /* below sidebar, above page content */
+}
+
+/* The sidebar is FIXED to the viewport and has its own internal scroller */
+.sidebar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  /* 100dvh fixes mobile browser UI shrinking bugs; 100vh as fallback */
+  height: 100dvh;
+  height: 100vh;
+  width: 240px;
+  background: $white;
+  color: $primary-pink;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  z-index: 2002;
+  transition: width .2s, transform .3s;
+  overflow: hidden; /* contain inner scroller */
+
+  &.collapsed {
+    width: 60px;
+
+    /* hide nested when collapsed */
+    .sidebar-nav ul.child-nav { display: none !important; }
+    .brand,
+    .label,
+    .logout-btn span { display: none !important; }
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    padding: 1.2rem 1rem;
+    .logo { width: 34px; height: 34px; object-fit: contain; }
+    .brand { font-weight: bold; font-size: 1.13rem; }
+  }
+
+  /* Inner scroller: ONLY this area scrolls */
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      a {
+        display: flex;
+        align-items: center;
+        gap: 1.15rem;
+        color: $primary-pink;
+        text-decoration: none;
+        padding: .78rem 1.2rem;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: background .18s;
+
+        .fas { font-size: 1.3rem; width: 22px; text-align: center; }
+
+        &.active,
+        &:hover { background: $primary-pink-dark; color: #fff; }
+      }
+
+      > a.parent-link { justify-content: space-between; }
+
+      .expand-icon {
+        transition: transform .2s;
+        &.expanded { transform: rotate(180deg); }
+      }
+
+      ul.child-nav {
+        list-style: none;
+        margin: 0;
+        padding: 0 0 0 2.5rem;
+
+        li a {
+          padding: .6rem 1rem;
+          font-weight: 500;
+          color: $primary-pink-dark;
+          border-radius: 6px;
+          transition: background .18s;
+
+          &.active,
+          &:hover { background: $primary-pink-dark; color: #fff; }
+        }
+      }
+    }
+  }
+
+  .sidebar-bottom {
+    padding: 1rem;
+    .logout-btn {
+      width: 100%;
+      background: $primary-pink;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: .8rem 1rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      cursor: pointer;
+      font-size: 1.09rem;
+      transition: background .16s;
+      &:hover { background: #e60073; }
+      .fa-sign-out-alt { font-size: 1.2rem; }
+    }
+  }
+}
+
+/* Mobile slide-in/out */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 86vw;        /* nice width on phones */
+    max-width: 320px;   /* keep it reasonable on large phones */
+    &.open { transform: translateX(0); }
+  }
+}
+// Add to admin-sidebar.component.scss
+.badge {
+  font-size: 0.75rem;
+  padding: 0.25em 0.4em;
+  min-width: 1.5em;
+  text-align: center;
+}
+
+.ms-auto {
+  margin-left: auto;
+}

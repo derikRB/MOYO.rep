@@ -1,0 +1,6 @@
+@Sego_and__Bux_HostAddress = http://localhost:5151
+
+GET {{Sego_and__Bux_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

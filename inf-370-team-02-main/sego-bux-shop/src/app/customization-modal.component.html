@@ -1,0 +1,120 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Customize {{product.name}}</h3>
+      <button class="close-btn" (click)="onClose()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Template selector -->
+      <div class="form-group">
+        <label>Template:</label>
+        <select [(ngModel)]="customization.template"
+                (ngModelChange)="onTemplateChange($event)"
+                class="form-control" required>
+          <option *ngFor="let t of templates" [value]="t.filePath">
+            {{ t.name }}
+          </option>
+        </select>
+      </div>
+      <!-- CUSTOMER INSTRUCTION BANNER -->
+<div class="instruction-banner">
+  <b>How to customize your product:</b>
+  <ul>
+    <li>Select a template to preview your product style.</li>
+    <li>Enter your custom text and choose your preferred font, size, and color.</li>
+    <li>Upload an image or logo if required (PNG/JPG recommended).</li>
+    <li>Use the controls to rotate, move, or bring elements to front/back.</li>
+    <li>Preview your design live—when satisfied, click <span class="primary-highlight">Save Customization</span> to confirm.</li>
+  </ul>
+  <div class="instruction-note">
+    <span class="icon">&#8505;</span>
+    <span>All changes are visible in real-time. Shipping and further customization details will be confirmed at checkout.</span>
+  </div>
+</div>
+
+
+      <!-- Custom Text -->
+      <div class="form-group">
+        <label>Custom Text:</label>
+        <input type="text"
+               [(ngModel)]="customization.customText"
+               (ngModelChange)="onTextChange($event)"
+               class="form-control" required />
+      </div>
+
+      <!-- Font, Size, Color -->
+      <div class="form-row">
+        <div class="form-group col">
+          <label>Font:</label>
+          <select [(ngModel)]="customization.font"
+                  (ngModelChange)="onFontChange($event)"
+                  class="form-control">
+            <option>Arial</option>
+            <option>Times New Roman</option>
+            <option>Courier New</option>
+          </select>
+        </div>
+        <div class="form-group col">
+          <label>Font Size:</label>
+          <input type="number"
+                 [(ngModel)]="customization.fontSize"
+                 (ngModelChange)="onSizeChange($event)"
+                 min="8" max="72"
+                 class="form-control"/>
+        </div>
+        <div class="form-group col">
+          <label>Text Color:</label>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="color"
+                   [(ngModel)]="customization.color"
+                   class="form-control"
+                   style="flex:1"/>
+            <button type="button"
+                    class="btn btn-secondary"
+                    (click)="onColorChange(customization.color)">Apply</button>
+             <div class="color-preview" [style.background]="appliedColor"></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload image -->
+      <div class="form-group">
+        <label>Upload Image:</label>
+        <input type="file" (change)="onFileSelected($event)" />
+      </div>
+
+      <!-- Bring to front/back & Rotation controls -->
+      <div class="button-bar">
+        <button class="btn btn-light" (click)="bringTextToFront()">Text Front</button>
+        <button class="btn btn-light" (click)="sendTextToBack()">Text Back</button>
+        <button class="btn btn-light" (click)="bringImageToFront()" [disabled]="!uploadedImageNode">Image Front</button>
+        <button class="btn btn-light" (click)="sendImageToBack()" [disabled]="!uploadedImageNode">Image Back</button>
+      </div>
+      <div class="rotation-bar">
+        <div>
+          <label>Text Rotation:</label>
+          <input type="range" min="0" max="360"
+                 [value]="textNode ? textNode.rotation() : 0"
+                 (input)="onTextRotationChange($event)" />
+        </div>
+        <div>
+          <label>Image Rotation:</label>
+          <input type="range" min="0" max="360"
+                 [value]="uploadedImageNode ? uploadedImageNode.rotation() : 0"
+                 (input)="onImageRotationChange($event)" [disabled]="!uploadedImageNode" />
+        </div>
+      </div>
+
+      <!-- Konva canvas -->
+      <div #canvasContainer id="canvasContainer" style="width:300px;height:300px;margin:auto;"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="onClose()">Cancel</button>
+      <button class="btn btn-primary" (click)="onSave()">Save Customization</button>
+    </div>
+  </div>
+</div>

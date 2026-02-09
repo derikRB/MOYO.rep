@@ -1,0 +1,50 @@
+<!-- <div class="help-backdrop" *ngIf="isOpen" (click)="close()"></div>
+
+<div class="help-modal" *ngIf="isOpen" role="dialog" aria-modal="true" aria-label="Help Center">
+  <header class="help-header">
+    <div class="title">
+      <span>Help Center</span>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn" (click)="openPdfInNewTab()">Open Full Help (PDF)</button>
+      <button type="button" class="icon-btn" (click)="close()" aria-label="Close">✕</button>
+    </div>
+  </header>
+
+  <div class="help-body">
+    <aside class="help-aside">
+      <input
+        type="text"
+        placeholder="Search help..."
+        [value]="query"
+        (input)="onSearch(($event.target as HTMLInputElement).value)"
+        class="search-input" />
+
+      <nav class="topics">
+        <button
+          *ngFor="let s of filtered"
+          class="topic"
+          [class.active]="s.key === activeKey"
+          (click)="openSection(s.key)">
+          {{ s.title }}
+        </button>
+      </nav>
+
+      <div class="pdf-cta">
+        <button type="button" class="btn full" (click)="openPdfInNewTab()">Open Full Help (PDF)</button>
+      </div>
+    </aside>
+
+    <main class="help-content">
+      <article *ngFor="let s of sections" [attr.data-help-key]="s.key" class="topic-content">
+        <h3 [class.highlight]="s.key === activeKey">{{ s.title }}</h3>
+        <div [innerHTML]="asHtml(s.content)"></div>
+      </article>
+
+      <section class="pdf-embed">
+        <h3>Full Help Document</h3>
+        <iframe [src]="pdfUrl | safeUrl" title="Full Help PDF" class="pdf-frame"></iframe>
+      </section>
+    </main>
+  </div>
+</div> -->

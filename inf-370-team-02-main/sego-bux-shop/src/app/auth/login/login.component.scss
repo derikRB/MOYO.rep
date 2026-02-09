@@ -1,0 +1,46 @@
+@use "sass:color";
+@use '../../../styles/variables' as *;
+
+.form-container {
+  max-width: 420px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.5rem 1.75rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+
+  h2 { color: $primary-pink; text-align: center; margin-bottom: 1rem; }
+
+  .form-control {
+    width: 100%;
+    padding: .7rem 1rem;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    background: #eef4ff;
+    &:focus { outline: none; border-color: $primary-pink; box-shadow: 0 0 0 3px rgba(233,30,99,.12); }
+    &.is-invalid { border-color: #f199a9; box-shadow: 0 0 0 3px rgba(233,30,99,.12); }
+  }
+
+  .field-error {
+    display: block;
+    margin: .35rem 0 .6rem;
+    color: $primary-pink;
+    font-weight: 700;
+  }
+
+  .btn.btn-primary {
+    margin-top: .5rem;
+    background: $primary-pink; color: #fff; border: none; border-radius: 10px; padding: .7rem 1rem;
+    &:hover { background: color.adjust($primary-pink, $lightness: -8%); }
+    &:disabled { background: #f0a9c2; cursor: not-allowed; }
+  }
+
+  .forgot-link {
+    display: block;
+    text-align: center;
+    margin-top: .85rem;
+    color: $primary-pink;
+    font-weight: 600;
+    text-decoration: none;
+  }
+}

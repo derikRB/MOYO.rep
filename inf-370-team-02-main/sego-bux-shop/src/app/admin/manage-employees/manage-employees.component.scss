@@ -1,0 +1,185 @@
+@use "sass:color";
+@use '../../../styles/variables' as *;
+
+.manage-employees {
+  padding: 1.5rem;
+  background: $white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: auto;
+
+  h2 {
+    color: $primary-pink;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  /* ---- SEARCH TOOLBAR (same pink rounded style) ---- */
+  .emp-toolbar{
+    display:flex; gap:.75rem; align-items:center; justify-content:space-between;
+    margin:0 0 1.1rem 0;
+
+    .left{ flex:1 1 auto; }
+    .right{ flex:0 0 auto; }
+
+    .search-input{
+      width:100%;
+      padding:.9rem 1.1rem;
+      border-radius:14px;
+      border:1.6px solid #ffe4f1;
+      background:#fef6fb;
+      box-shadow:0 2px 8px #e91e6314 inset;
+      outline:none; font-size:1rem;
+      &::placeholder{ color:#9a8b96; }
+      &:focus{
+        border-color:$primary-pink; background:#fff;
+        box-shadow:0 0 0 3px #ffe4f1;
+      }
+    }
+
+    .clear-btn{
+      border:none; border-radius:12px; padding:.65rem 1.05rem;
+      background:#f6edf4; color:#222; font-weight:800;
+      box-shadow:0 2px 6px rgba(233,30,99,.12);
+      cursor:pointer; transition:background-color .18s;
+      &:hover{ background: color.adjust(#f6edf4, $lightness: -6%); }
+    }
+  }
+
+  /* REGISTER/EDIT FORM */
+  .employee-form, .edit-form form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 1.2rem;
+
+    .form-group {
+      flex: 1 1 45%;
+      display: flex;
+      flex-direction: column;
+      label {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+      }
+      input, select {
+        width: 100%;
+        padding: 0.65rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        &:focus { border-color: $primary-pink; }
+      }
+    }
+    .form-actions {
+      flex: 1 1 100%;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      button {
+        background: $primary-pink;
+        color: $white;
+        border: none;
+        padding: 0.7rem 1.3rem;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.22s;
+        &:hover { background: color.adjust($primary-pink, $lightness: -13%); }
+        &.cancel-btn {
+          background: $grey-bg;
+          color: $black;
+          &:hover { background: color.adjust($grey-bg, $lightness: -10%); }
+        }
+      }
+    }
+  }
+
+  hr {
+    margin: 2.3rem 0 1.3rem 0;
+    border-color: $grey-bg;
+  }
+
+  /* EMPLOYEES TABLE */
+  .employees-table-container {
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px #e91e6340;
+
+    .employees-table-header, .employees-table-row {
+      display: grid;
+      grid-template-columns: 2.2fr 2.2fr 1.2fr 1fr;
+      align-items: center;
+      padding: 0 1.4rem;
+      min-height: 54px;
+    }
+    .employees-table-header {
+      background: $primary-pink;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: 0.01em;
+      .cell { padding: 16px 0 8px 0; }
+    }
+    .employees-table-row {
+      background: #fff;
+      border-bottom: 1px solid #f7d4e5;
+      transition: background 0.18s;
+      &:hover { background: #fff2fa; }
+      .cell {
+        padding: 12px 0;
+        font-size: 1.01rem;
+        display: flex;
+        align-items: flex-start;
+        &.actions {
+          display: flex;
+          gap: 0.6rem;
+          align-items: center;
+          justify-content: flex-start;
+          .icon-btn {
+            background: none;
+            border: none;
+            padding: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.14s;
+            &:hover { background: #fde0ed; }
+            svg { width: 22px; height: 22px; fill: #e91e63; }
+          }
+        }
+      }
+    }
+  }
+
+  /* EDIT FORM styling */
+  .edit-form {
+    background: $white;
+    padding: 1.6rem 2.3rem;
+    border-radius: 11px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.09);
+    max-width: 650px;
+    margin: 2.5rem auto 0 auto;
+
+    h3 {
+      color: $primary-pink;
+      margin-bottom: 1.1rem;
+    }
+  }
+}
+.field-error {
+  display: block;
+  margin-top: 6px;
+  color: #e91e63;
+  font-weight: 700;
+}
+
+.was-submitted input.ng-invalid,
+.was-submitted select.ng-invalid,
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: #e91e63 !important;
+  background: #fff2f8 !important;
+}

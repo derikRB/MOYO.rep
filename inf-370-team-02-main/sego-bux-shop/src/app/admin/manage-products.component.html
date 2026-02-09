@@ -1,0 +1,243 @@
+<div class="manage-products">
+  <h2>Manage Products</h2>
+
+  <!-- Search toolbar (same visual style as Categories) -->
+  <div class="toolbar-row">
+    <div class="search-toolbar">
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="searchTerm"
+        placeholder="Search by name, description, type or category…"
+        (input)="page = 1" />
+      <button type="button" class="btn-clear" (click)="clearSearch()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Brand-styled Import -->
+  <div class="actions-bar">
+    <button type="button" class="brand-btn" (click)="excelInput.click()">
+      Import Products (Excel)
+    </button>
+    <input
+      type="file"
+      accept=".xlsx,.csv"
+      (change)="onImportExcel($event)"
+      hidden
+      #excelInput
+    />
+  </div>
+
+  <!-- Product Form -->
+  <form
+    #formRef="ngForm"
+    (ngSubmit)="onSubmit(formRef)"
+    class="product-form"
+    [class.was-submitted]="prodSubmitted"
+  >
+    <!-- anchor for smooth scroll -->
+    <div #formTop></div>
+
+    <!-- Name -->
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        [(ngModel)]="form.name"
+        required
+        #nameModel="ngModel"
+        #nameInput
+      />
+      <small class="field-error" *ngIf="nameModel.invalid && (nameModel.touched || prodSubmitted)">
+        Product name is required.
+      </small>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input
+        id="description"
+        name="description"
+        type="text"
+        [(ngModel)]="form.description"
+        required
+        #descModel="ngModel"
+      />
+      <small class="field-error" *ngIf="descModel.invalid && (descModel.touched || prodSubmitted)">
+        Description is required.
+      </small>
+    </div>
+
+    <!-- Price with min + preview -->
+    <div class="form-group">
+      <label for="price">Price (R)</label>
+      <input
+        id="price"
+        name="price"
+        type="number"
+        [(ngModel)]="form.price"
+        #priceModel="ngModel"
+        min="0"
+        step="0.01"
+        required
+      />
+      <small class="field-error" *ngIf="priceModel.invalid && (priceModel.touched || prodSubmitted)">
+        <span *ngIf="priceModel.errors?.['required']">Price is required.</span>
+        <span *ngIf="priceModel.errors?.['min']">Cannot be negative.</span>
+      </small>
+      <div class="hint" *ngIf="form.price != null">
+        Preview:&nbsp;{{ form.price | currency:'R':'symbol':'1.2-2' }}
+      </div>
+    </div>
+
+    <!-- Stock with min + message -->
+    <div class="form-group">
+      <label for="stockQuantity">Stock Quantity</label>
+      <input
+        id="stockQuantity"
+        name="stockQuantity"
+        type="number"
+        [(ngModel)]="form.stockQuantity"
+        #stockModel="ngModel"
+        min="0"
+        step="1"
+        required
+      />
+      <small class="field-error" *ngIf="stockModel.invalid && (stockModel.touched || prodSubmitted)">
+        <span *ngIf="stockModel.errors?.['required']">Stock quantity is required.</span>
+        <span *ngIf="stockModel.errors?.['min']">Cannot be negative.</span>
+      </small>
+    </div>
+
+    <!-- Category -->
+    <div class="form-group full-width">
+      <label for="categoryID">Category</label>
+      <select
+        id="categoryID"
+        name="categoryID"
+        [(ngModel)]="form.categoryID"
+        (change)="onCategoryChange()"
+        required
+        #catModel="ngModel"
+      >
+        <option [ngValue]="null" disabled>-- Select a Category --</option>
+        <option *ngFor="let cat of categories" [ngValue]="cat.categoryID">
+          {{ cat.categoryName }}
+        </option>
+      </select>
+      <small class="field-error" *ngIf="catModel.invalid && (catModel.touched || prodSubmitted)">
+        Category is required.
+      </small>
+    </div>
+
+    <!-- Product Type (filtered by category) -->
+    <div class="form-group full-width" *ngIf="form.categoryID">
+      <label for="productTypeID">Product Type</label>
+      <select
+        id="productTypeID"
+        name="productTypeID"
+        [(ngModel)]="form.productTypeID"
+        required
+        #typeModel="ngModel"
+      >
+        <option [ngValue]="null" disabled>-- Select a Product Type --</option>
+        <option *ngFor="let pt of filteredProductTypes" [ngValue]="pt.productTypeID">
+          {{ pt.productTypeName }}
+        </option>
+      </select>
+      <small class="field-error" *ngIf="typeModel.invalid && (typeModel.touched || prodSubmitted)">
+        Product type is required.
+      </small>
+    </div>
+
+    <!-- Add New Images -->
+    <div class="form-group full-width">
+      <label for="images">Add New Images</label>
+      <input id="images" type="file" (change)="onFileChange($event)" multiple />
+    </div>
+
+    <!-- Existing Images -->
+    <div *ngIf="isEditMode && currentImages.length" class="existing-images full-width">
+      <h5>Existing Images</h5>
+      <div class="thumbnails">
+        <div *ngFor="let img of currentImages" class="thumb">
+          <div class="thumb-image">
+            <img [src]="'https://localhost:7025' + img.imageUrl" alt="Product image" loading="lazy" />
+            <button type="button" class="delete-btn" (click)="deleteImage(img)">×</button>
+          </div>
+          <label class="primary-label">
+            <input type="radio" name="primaryImage" [value]="img.imageID" [(ngModel)]="selectedPrimaryImageId" />
+            Primary
+          </label>
+          <label class="secondary-label">
+            <input type="radio" name="secondaryImage" [value]="img.imageID" [(ngModel)]="selectedSecondaryImageId" />
+            Secondary
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit / Cancel -->
+    <div class="form-actions full-width">
+      <button type="submit" (click)="prodSubmitted = true">
+        {{ isEditMode ? 'Update Product' : 'Add Product' }}
+      </button>
+      <button *ngIf="isEditMode" type="button" class="cancel-btn" (click)="resetForm()">Cancel</button>
+    </div>
+  </form>
+
+  <hr />
+
+  <!-- Products list -->
+  <div class="products-table-container">
+    <div class="products-table-header">
+      <div class="cell name">Product</div>
+      <div class="cell price">Price</div>
+      <div class="cell stock">Stock</div>
+      <div class="cell actions">Actions</div>
+    </div>
+
+    <div *ngFor="let p of filteredProducts | paginate:page:pageSize" class="products-table-row">
+      <div class="cell name">
+        <div class="prod-title">{{ p.name }}</div>
+        <div class="prod-desc">{{ p.description }}</div>
+        <div class="prod-type">{{ getProductTypeName(p.productTypeID) }}</div>
+      </div>
+      <div class="cell price">{{ p.price | currency:'R':'symbol':'1.2-2' }}</div>
+      <div class="cell stock">{{ p.stockQuantity | number }}</div>
+      <div class="cell actions">
+        <button type="button" class="icon-btn" title="Edit" (click)="editProduct(p)">
+          <svg width="22" height="22" fill="none" stroke="#e91e63" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 17.25V21h3.75l11-11.02-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" title="Delete" (click)="promptDelete(p)">
+          <svg width="22" height="22" viewBox="0 0 24 24"
+               fill="none" stroke="#e91e63" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
+                     m3-3h4a2 2 0 0 1 2 2v1H7V5a2 2 0 0 1 2-2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-pagination
+    [page]="page"
+    [totalPages]="totalPages"
+    (pageChange)="page = $event">
+  </app-pagination>
+
+  <confirm-dialog
+    *ngIf="confirmingDelete"
+    [message]="'Delete “' + toDelete?.name + '”?'"
+    (confirm)="onDeleteConfirmed()
+"
+    (cancel)="onDeleteCanceled()">
+  </confirm-dialog>
+</div>

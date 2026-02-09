@@ -1,0 +1,31 @@
+<!-- One-time arrival loader -->
+<div class="route-loader" *ngIf="isBootstrapping" aria-live="polite" aria-busy="true">
+  <div class="spinner" role="status"></div>
+</div>
+
+<div class="form-container">
+  <h2>Email Verification</h2>
+  <p>An OTP was sent to: <b>{{ email }}</b></p>
+
+  <form [formGroup]="otpForm" (ngSubmit)="onVerify()">
+    <label>Enter OTP</label>
+    <input type="text" formControlName="otp" maxlength="6" class="form-control" />
+    <div *ngIf="otpForm.get('otp')?.touched && otpForm.get('otp')?.invalid" class="error">
+      Please enter a 6-digit OTP.
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+      {{ isSubmitting ? 'Verifying...' : 'Verify' }}
+    </button>
+  </form>
+
+  <button class="btn-link"
+          (click)="onResend()"
+          [disabled]="otpSecondsLeft > 0 || isResending">
+    Resend OTP
+    <span *ngIf="otpSecondsLeft > 0">({{ otpSecondsLeft }}s)</span>
+  </button>
+
+  <div *ngIf="infoMsg" class="alert alert-success mt-2">{{ infoMsg }}</div>
+  <div *ngIf="errorMsg" class="alert alert-danger mt-2">{{ errorMsg }}</div>
+</div>

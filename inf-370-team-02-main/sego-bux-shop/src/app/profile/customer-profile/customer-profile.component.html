@@ -1,0 +1,182 @@
+<div class="profile-layout-container">
+
+  <!-- toast + confirm-dialog -->
+  <app-toast-container></app-toast-container>
+  <confirm-dialog
+    *ngIf="confirming"
+    [message]="confirmMessage"
+    (confirm)="onConfirmed()"
+    (cancel)="onCanceled()">
+  </confirm-dialog>
+
+  <!-- LEFT: PROFILE -->
+  <div class="left-profile">
+    <h2>My Profile</h2>
+
+    <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" novalidate>
+      <!-- Username -->
+      <label>Username</label>
+      <input
+        class="form-control"
+        formControlName="username"
+        autocomplete="username"
+        [attr.maxlength]="20"
+        placeholder="e.g. sego_user"
+        [class.is-invalid]="profileForm.get('username')?.invalid && profileForm.get('username')?.touched"
+      />
+      <small class="field-error" *ngIf="pErr('username','required')">
+        Username is required.
+      </small>
+      <small class="field-error" *ngIf="!pErr('username','required') && profileForm.get('username')?.hasError('pattern')">
+        Username may contain <strong>letters, numbers, and underscores</strong> only (no spaces).
+      </small>
+      <small class="field-error"
+             *ngIf="!pErr('username','required') && !profileForm.get('username')?.hasError('pattern') && (pErr('username','minlength') || pErr('username','maxlength'))">
+        Username must be <strong>3–20 characters</strong>.
+      </small>
+
+      <!-- First Name -->
+      <label>First Name</label>
+      <input
+        class="form-control"
+        formControlName="name"
+        autocomplete="given-name"
+        [attr.maxlength]="40"
+        placeholder="e.g. Sego"
+        [class.is-invalid]="profileForm.get('name')?.invalid && profileForm.get('name')?.touched"
+      />
+      <small class="field-error" *ngIf="pErr('name','required')">
+        First name is required.
+      </small>
+      <small class="field-error" *ngIf="!pErr('name','required') && profileForm.get('name')?.hasError('pattern')">
+        First name may contain <strong>letters</strong> and <strong>spaces/'/-</strong> only.
+      </small>
+
+      <!-- Surname -->
+      <label>Surname</label>
+      <input
+        class="form-control"
+        formControlName="surname"
+        autocomplete="family-name"
+        [attr.maxlength]="40"
+        placeholder="e.g. BUX"
+        [class.is-invalid]="profileForm.get('surname')?.invalid && profileForm.get('surname')?.touched"
+      />
+      <small class="field-error" *ngIf="pErr('surname','required')">
+        Last name is required.
+      </small>
+      <small class="field-error" *ngIf="!pErr('surname','required') && profileForm.get('surname')?.hasError('pattern')">
+        Last name may contain <strong>letters</strong> and <strong>spaces/'/-</strong> only.
+      </small>
+
+      <!-- Email -->
+      <label>Email</label>
+      <input
+        class="form-control"
+        formControlName="email"
+        type="email"
+        autocomplete="email"
+        placeholder="e.g. name&#64;example.com"
+        [class.is-invalid]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+      />
+      <small class="field-error" *ngIf="pErr('email','required')">Email is required.</small>
+      <small class="field-error"
+        *ngIf="!pErr('email','required') && profileForm.get('email')?.hasError('email')">
+        Please enter a valid email (must include <strong>&#64;</strong>).
+      </small>
+
+      <!-- Phone -->
+      <label>Phone</label>
+      <input
+        class="form-control"
+        formControlName="phone"
+        inputmode="numeric"
+        [attr.maxlength]="10"
+        placeholder="e.g. 0123456789"
+        [class.is-invalid]="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched"
+      />
+      <small class="field-error" *ngIf="pErr('phone','required')">
+        Phone number is required.
+      </small>
+      <small class="field-error"
+        *ngIf="!pErr('phone','required') && profileForm.get('phone')?.hasError('pattern')">
+        Phone number must <strong>start with 0</strong> and be <strong>exactly 10 digits</strong>.
+      </small>
+
+      <!-- Address -->
+      <label>Address</label>
+      <input
+        id="autocomplete"
+        class="form-control"
+        formControlName="address"
+        placeholder="Enter your delivery address"
+        autocomplete="street-address"
+        [class.is-invalid]="profileForm.get('address')?.invalid && profileForm.get('address')?.touched"
+      />
+      <small class="field-error" *ngIf="pErr('address','required')">Address is required.</small>
+
+      <!-- server error surface -->
+      <div *ngIf="profileError" class="field-error">{{ profileError }}</div>
+
+      <button type="submit" class="btn-primary" [disabled]="!canSubmitProfile">
+        Update Profile
+      </button>
+    </form>
+
+    <hr />
+
+    <!-- Change Password -->
+    <h3>Change Password</h3>
+    <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" novalidate>
+      <label>Current Password</label>
+      <input
+        type="password"
+        class="form-control"
+        formControlName="currentPassword"
+        autocomplete="current-password"
+        [class.is-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
+      />
+      <small class="field-error" *ngIf="pwErr('currentPassword','required')">
+        Current password is required.
+      </small>
+
+      <label>New Password</label>
+      <input
+        type="password"
+        class="form-control"
+        formControlName="newPassword"
+        autocomplete="new-password"
+        [class.is-invalid]="(passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) || passwordForm.hasError('mismatch')"
+      />
+      <small class="field-error" *ngIf="pwErr('newPassword','required')">Password is required.</small>
+      <small class="field-error" *ngIf="!pwErr('newPassword','required') && pwErr('newPassword','minlength')">
+        Password must be at least <strong>8 characters</strong>.
+      </small>
+
+      <label>Confirm New Password</label>
+      <input
+        type="password"
+        class="form-control"
+        formControlName="confirmNewPassword"
+        autocomplete="new-password"
+        [class.is-invalid]="passwordForm.hasError('mismatch') && (passwordForm.touched || passwordForm.dirty)"
+      />
+      <small class="field-error" *ngIf="passwordForm.hasError('mismatch') && (passwordForm.touched || passwordForm.dirty)">
+        Passwords don't match!
+      </small>
+
+      <div *ngIf="passwordError" class="field-error">{{ passwordError }}</div>
+
+      <button type="submit" class="btn-primary" [disabled]="!canSubmitPassword">
+        Update Password
+      </button>
+    </form>
+
+    <hr />
+
+    <button (click)="deleteAccount()" class="btn-danger-outline">Delete My Account</button>
+  </div>
+
+  <!-- (Right/cart panel left as-is) -->
+
+</div>

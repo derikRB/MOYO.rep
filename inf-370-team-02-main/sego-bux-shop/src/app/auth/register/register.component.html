@@ -1,0 +1,156 @@
+<!-- One-time route loader shown while navigating to Verify OTP -->
+<div class="route-loader" *ngIf="isRouting" aria-live="polite" aria-busy="true">
+  <div class="spinner" role="status"></div>
+</div>
+
+<div class="form-container">
+  <h2>Create Your Account</h2>
+
+  <!-- 1) Show form until registration succeeds -->
+  <form
+    *ngIf="!justRegisteredEmail"
+    [formGroup]="registerForm"
+    (ngSubmit)="onSubmit()"
+    novalidate
+  >
+    <!-- Username -->
+    <label>Username</label>
+    <input
+      formControlName="username"
+      class="form-control"
+      [attr.maxlength]="20"
+      autocomplete="username"
+      placeholder="e.g. sego_user"
+    />
+    <small class="field-error" *ngIf="err('username','required')">
+      Username is required.
+    </small>
+    <small class="field-error"
+           *ngIf="!err('username','required') && err('username','pattern')">
+      Username may contain <strong>letters, numbers, and underscores</strong> only (no spaces).
+    </small>
+    <small class="field-error"
+           *ngIf="!err('username','required') && !err('username','pattern') && (err('username','minlength') || err('username','maxlength'))">
+      Username must be <strong>3–20 characters</strong>.
+    </small>
+
+    <!-- First Name -->
+    <label>First Name</label>
+    <input
+      formControlName="name"
+      class="form-control"
+      [attr.maxlength]="40"
+      autocomplete="given-name"
+      placeholder="e.g.Sego"
+    />
+    <small class="field-error" *ngIf="err('name','required')">
+      First name is required.
+    </small>
+    <small class="field-error"
+           *ngIf="!err('name','required') && err('name','pattern')">
+      First name may contain <strong>letters</strong> and <strong>spaces/'/-</strong> only.
+    </small>
+    <small class="field-error"
+           *ngIf="!err('name','required') && !err('name','pattern') && (err('name','minlength') || err('name','maxlength'))">
+      First name must be <strong>2–40 characters</strong>.
+    </small>
+
+    <!-- Last Name -->
+    <label>Last Name</label>
+    <input
+      formControlName="surname"
+      class="form-control"
+      [attr.maxlength]="40"
+      autocomplete="family-name"
+      placeholder="e.g. BUX"
+    />
+    <small class="field-error" *ngIf="err('surname','required')">
+      Last name is required.
+    </small>
+    <small class="field-error"
+           *ngIf="!err('surname','required') && err('surname','pattern')">
+      Last name may contain <strong>letters</strong> and <strong>spaces/'/-</strong> only.
+    </small>
+    <small class="field-error"
+           *ngIf="!err('surname','required') && !err('surname','pattern') && (err('surname','minlength') || err('surname','maxlength'))">
+      Last name must be <strong>2–40 characters</strong>.
+    </small>
+
+    <!-- Email -->
+    <label>Email</label>
+    <input formControlName="email" class="form-control" autocomplete="email" />
+    <small class="field-error" *ngIf="err('email','required')">
+      Email is required.
+    </small>
+    <small class="field-error"
+           *ngIf="!err('email','required') && err('email','email')">
+      Please use a valid email address (e.g. name&#64;example.com).
+    </small>
+
+    <!-- Phone -->
+    <label>Phone Number</label>
+    <input
+      formControlName="phone"
+      class="form-control"
+      inputmode="numeric"
+      [attr.maxlength]="10"
+      placeholder="e.g. 0123456789"
+    />
+    <small class="field-error" *ngIf="err('phone','required')">
+      Phone number is required.
+    </small>
+    <small class="field-error"
+           *ngIf="!err('phone','required') && err('phone','pattern')">
+      Phone number must contain digits only.
+    </small>
+    <small class="field-error"
+           *ngIf="
+             !err('phone','required') &&
+             !err('phone','pattern') &&
+             (err('phone','minlength') || err('phone','maxlength'))
+           ">
+      Phone number must be <strong>exactly 10 digits</strong> (e.g. <strong>0821234567</strong>).
+    </small>
+
+    <!-- Address -->
+    <label>Address</label>
+    <input
+      id="autocomplete"
+      formControlName="address"
+      class="form-control"
+      placeholder="Enter your delivery address"
+      autocomplete="street-address"
+    />
+    <small class="field-error" *ngIf="err('address','required')">
+      Address is required.
+    </small>
+
+    <!-- Password -->
+    <label>Password</label>
+    <input formControlName="password" type="password" class="form-control" autocomplete="new-password" />
+    <small class="field-error" *ngIf="err('password','required')">
+      Password is required.
+    </small>
+
+    <!-- Server error -->
+    <div *ngIf="registerError" class="field-error">
+      {{ registerError }}
+    </div>
+
+    <button class="btn-primary" type="submit" [disabled]="registerForm.invalid">
+      Register
+    </button>
+  </form>
+
+  <!-- 2) After success: show verify-email button -->
+  <div *ngIf="justRegisteredEmail" class="mt-4 text-center success-actions">
+    <p>
+      An OTP has been sent to
+      <strong>{{ justRegisteredEmail }}</strong>.
+    </p>
+    <!-- Styled the same as Sign In / Register buttons -->
+    <button class="btn-primary" (click)="onVerify()">
+      Verify Email
+    </button>
+  </div>
+</div>

@@ -1,0 +1,144 @@
+<div class="order-history">
+  <h2 class="order-history-title">
+    <span class="emoji"></span> Order History
+  </h2>
+
+  <div class="filters">
+    <label>
+      Status:
+      <select [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+        <option value="">All</option>
+        <option>Pending</option>
+        <option>Processing</option>
+        <option>Shipped</option>
+        <option>Delivered</option>
+        <option>Dispatched</option>
+      </select>
+    </label>
+
+    <label>
+      Date:
+      <input type="date" [(ngModel)]="filterDate" (ngModelChange)="applyFilters()" />
+    </label>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-msg">Loading your orders…</div>
+  <div *ngIf="!isLoading && filteredOrders.length === 0" class="empty-msg">No orders found.</div>
+
+  <div class="scroll-wrap" *ngIf="!isLoading && filteredOrders.length > 0" role="region" aria-label="Order history">
+    <div class="desk-width">
+      <div class="order-list">
+        <div class="order-card" *ngFor="let o of pagedOrders(); let i = index">
+          <div class="order-header">
+            <span class="order-num">Order #{{ o.orderID }}</span>
+
+            <span class="order-date">
+              {{ o.orderDate | catDate }}
+              <span class="muted">({{ o.orderDate | catRelative }})</span>
+            </span>
+
+            <span class="order-status"
+                  [class.pending]="getDisplayStatus(o)==='Pending'"
+                  [class.processing]="getDisplayStatus(o)==='Processing'"
+                  [class.shipped]="getDisplayStatus(o)==='Shipped'"
+                  [class.delivered]="getDisplayStatus(o)==='Delivered'">
+              {{ getDisplayStatus(o) }}
+            </span>
+          </div>
+
+          <!-- Progress timeline -->
+          <div class="progressbar" aria-label="Order progress">
+            <div class="track">
+              <div class="fill" [style.width]="progressPercent(o)"></div>
+            </div>
+            <div class="steps">
+              <div class="step" *ngFor="let s of externalSteps; let j = index" [class.active]="isStepActive(o, j)">
+                <span class="dot"></span>
+                <span class="lbl">{{ s }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-meta">
+            <div>
+              <b>Delivery:</b> {{ o.deliveryStatus }}
+              <span *ngIf="o.waybillNumber"> | <b>Waybill:</b> {{ o.waybillNumber }}</span>
+            </div>
+            <div><b>Total:</b> {{ o.totalPrice | currency:'ZAR':'symbol':'1.0-0' }}</div>
+            <div><b>Method:</b> {{ o.deliveryMethod }}</div>
+          </div>
+
+          <div class="order-lines">
+            <div class="order-line" *ngFor="let l of o.orderLines">
+              <div class="line-imgs-side">
+                <img
+                  [src]="l.productImageUrl ? getFullImageUrl(l.productImageUrl) : 'assets/logo.png'"
+                  class="order-img-main"
+                  alt="Product" />
+
+                <img
+                  *ngIf="l.uploadedImagePath"
+                  [src]="getFullImageUrl(l.uploadedImagePath!)"
+                  class="order-img-custom"
+                  alt="Customization"
+                  (click)="openImageModal(getFullImageUrl(l.uploadedImagePath!))" />
+
+                <img
+                  *ngIf="l.snapshotPath"
+                  [src]="getFullImageUrl(l.snapshotPath!)"
+                  class="order-img-custom"
+                  alt="Preview"
+                  (click)="openImageModal(getFullImageUrl(l.snapshotPath!))" />
+              </div>
+
+              <div class="line-details-main">
+                <div class="line-title">
+                  <b>{{ l.productName }}</b> × {{ l.quantity }}
+                  <span *ngIf="hasCustomization(l)" class="pill pill-customized">Customized</span>
+                </div>
+
+                <div *ngIf="l.customText" class="custom-text">“{{ l.customText }}”</div>
+
+                <div *ngIf="hasNonDefaultStyle(l)" class="custom-meta">
+                  <span *ngIf="l.font">Font: {{ l.font }}</span>
+                  <span *ngIf="l.fontSize">, Size: {{ l.fontSize }}</span>
+                  <span *ngIf="l.color">, Color:
+                    <span class="color-box" [style.background]="l.color"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+         <!-- Feedback + Review buttons -->
+<div class="order-actions" *ngIf="getDisplayStatus(o) === 'Delivered'">
+  <button class="btn btn-outline" (click)="goToFeedback(o.orderID!)">
+    <i class="fa fa-comment"></i> Leave Feedback
+  </button>
+
+  <ng-container *ngFor="let l of o.orderLines">
+    <button class="btn btn-solid"
+            (click)="goToReview(o.orderID!, l.productID!)"
+            *ngIf="!isReviewed(o.orderID!, l.productID!)">
+      <i class="fa fa-star"></i> Review {{ l.productName }}
+    </button>
+  </ng-container>
+</div>
+
+
+      <!-- Pagination -->
+      <div class="order-pagination" *ngIf="totalPages > 1">
+        <button (click)="prevPage()" [disabled]="page === 1">&lt;</button>
+        <span *ngFor="let p of [].constructor(totalPages); let i = index">
+          <button (click)="goToPage(i+1)" [class.active]="page === (i+1)">{{ i+1 }}</button>
+        </span>
+        <button (click)="nextPage()" [disabled]="page === totalPages">&gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image preview -->
+  <div *ngIf="modalImageUrl" class="image-modal" (click)="closeImageModal()">
+    <img [src]="modalImageUrl" alt="Preview" />
+  </div>
+</div>

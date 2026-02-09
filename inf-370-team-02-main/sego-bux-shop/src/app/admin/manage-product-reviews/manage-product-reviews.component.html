@@ -1,0 +1,162 @@
+<div class="manage-reviews" (click)="$event.stopPropagation()">
+  <h2>Product Reviews Management</h2>
+
+  <!-- Controls – styled like your Categories toolbar -->
+  <div class="controls">
+    <div class="search-toolbar">
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="searchTerm"
+        placeholder="Search by reviewer, title, text or product…"
+        (input)="search()" />
+      <button type="button" class="btn-clear" (click)="clearSearch()">Clear</button>
+    </div>
+
+    <div class="filter-chipbar">
+      <button class="chip" [class.active]="filterStatus==='All'"      (click)="filter('All')">All</button>
+      <button class="chip" [class.active]="filterStatus==='Pending'"  (click)="filter('Pending')">Pending</button>
+      <button class="chip" [class.active]="filterStatus==='Approved'" (click)="filter('Approved')">Approved</button>
+      <button class="chip" [class.active]="filterStatus==='Declined'" (click)="filter('Declined')">Declined</button>
+    </div>
+  </div>
+
+  <!-- Bulk actions -->
+  <div class="bulk-actions" *ngIf="displayed.length">
+    <label class="select-all">
+      <input type="checkbox" (change)="toggleAll()" [checked]="selectedIds.size === displayed.length" />
+      Select All
+    </label>
+
+    <button (click)="bulkApprove()" [disabled]="!selectedIds.size">Bulk Approve</button>
+    <button class="bulk-decline" (click)="bulkDecline()" [disabled]="!selectedIds.size">Bulk Decline</button>
+  </div>
+
+  <!-- Table -->
+  <div class="scroll-wrap" *ngIf="!loading">
+    <div class="reviews-table-header grid-row">
+      <div class="cell checkbox-cell"></div>
+      <div class="cell img-cell"></div>
+      <div class="cell title-cell">Title</div>
+      <div class="cell">Reviewer</div>
+      <div class="cell">Product</div>
+      <div class="cell rating-col">Rating</div>
+      <div class="cell status-cell">Status</div>
+      <div class="cell submitted-cell">Submitted</div>
+      <div class="cell actions">Actions</div>
+    </div>
+
+    <div *ngIf="displayed.length === 0" class="no-reviews">No reviews found.</div>
+
+    <div *ngFor="let review of displayed" class="reviews-table-row grid-row">
+      <div class="cell checkbox-cell">
+        <input type="checkbox" [checked]="selectedIds.has(review.reviewID)" (change)="toggleSelection(review.reviewID)" />
+      </div>
+
+      <div class="cell img-cell">
+        <ng-container *ngIf="review.photoUrl; else noPhoto">
+          <img
+            [src]="getFullPhotoUrl(review.photoUrl)"
+            alt="Photo"
+            class="review-photo-thumb"
+            (click)="openModal(getFullPhotoUrl(review.photoUrl))"
+            (error)="handleImgError($event)" />
+        </ng-container>
+        <ng-template #noPhoto>
+          <span class="review-photo-thumb empty">
+            <i class="fa fa-image"></i>
+          </span>
+        </ng-template>
+      </div>
+
+      <div class="cell title-cell review-title">{{ review.reviewTitle || '—' }}</div>
+      <div class="cell">{{ review.userName }}</div>
+      <div class="cell">{{ review.productName || ('#' + review.productID) }}</div>
+
+      <div class="cell rating-col">
+        <span class="stars">
+          <ng-container *ngFor="let s of [1,2,3,4,5]">
+            <i class="fa fa-star" [class.faded]="s > review.rating"></i>
+          </ng-container>
+        </span>
+      </div>
+
+      <div class="cell status-cell">
+        <span class="status" [ngClass]="{
+          'pending': review.status === 'Pending',
+          'approved': review.status === 'Approved',
+          'declined': review.status === 'Declined'
+        }">{{ review.status }}</span>
+      </div>
+
+      <div class="cell submitted-cell">{{ review.submittedDate | date:'shortDate' }}</div>
+
+      <div class="cell actions" (click)="$event.stopPropagation()">
+        <button class="manage-btn" (click)="openManage(review.reviewID)">Manage</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pager -->
+  <div class="pager" *ngIf="pageCount > 1">
+    <button class="page-btn" (click)="goPrev()" [disabled]="page===1">Prev</button>
+    <button class="page-btn"
+            *ngFor="let n of pageNumbers"
+            [class.active]="n===page"
+            (click)="goPage(n)">{{ n }}</button>
+    <button class="page-btn" (click)="goNext()" [disabled]="page===pageCount">Next</button>
+  </div>
+
+  <!-- IMAGE PREVIEW -->
+  <div class="img-preview-overlay" *ngIf="modalImage" (click)="closeModal()" role="dialog" aria-modal="true" aria-label="Review image preview">
+    <div class="img-preview-card" (click)="$event.stopPropagation()">
+      <button class="img-preview-close" (click)="closeModal()" aria-label="Close">×</button>
+      <img class="img-preview-image" [src]="modalImage" alt="Review photo" />
+    </div>
+  </div>
+
+  <!-- Manage sheet (already styled) -->
+  <div
+    class="manage-sheet"
+    *ngIf="manageFor"
+    (click)="closeManage()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="manageTitle"
+  >
+    <div class="sheet-card" (click)="$event.stopPropagation()">
+      <div class="sheet-head">
+        <div class="handle" aria-hidden="true"></div>
+        <h3 id="manageTitle">Manage review #{{ manageFor }}</h3>
+      </div>
+
+      <div class="sheet-body">
+        <div class="sheet-actions">
+          <button class="approve" (click)="onApproveFromSheet()">
+            <i class="fa fa-check"></i> Approve
+          </button>
+          <button class="decline" (click)="onDeclineFromSheet()">
+            <i class="fa fa-times"></i> Decline
+          </button>
+        </div>
+      </div>
+
+      <div class="sheet-footer">
+        <button class="close" (click)="closeManage()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm dialog -->
+  <confirm-dialog
+    *ngIf="confirming"
+    [message]="
+      confirmAction === 'approve'      ? 'Approve this review?' :
+      confirmAction === 'decline'      ? 'Decline this review?' :
+      confirmAction === 'bulk-approve' ? 'Approve selected reviews?' :
+      'Decline selected reviews?'
+    "
+    (confirm)="onConfirm()"
+    (cancel)="onCancel()">
+  </confirm-dialog>
+</div>

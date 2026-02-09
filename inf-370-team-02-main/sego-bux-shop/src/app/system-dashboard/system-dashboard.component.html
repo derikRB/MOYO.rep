@@ -1,0 +1,213 @@
+<div class="sysdash">
+  <!-- TOP: metrics -->
+  <section class="card metrics-card">
+    <header><h3>Dashboard Metrics</h3></header>
+    <app-metrics-charts></app-metrics-charts>
+  </section>
+
+  <!-- MIDDLE: two blocks -->
+  <div class="two-col">
+    <!-- Timers -->
+    <section class="card">
+      <header>
+        <h3>Configurable Timers</h3>
+        <button class="btn-link" (click)="refreshCurrent()">Refresh</button>
+      </header>
+
+      <p class="muted" style="margin-top:-6px">
+        Values are <b>stored in minutes</b>. Seconds are rounded to the nearest minute.
+        <span class="muted">Helper: 60 min = 1 h.</span>
+      </p>
+
+      <form [formGroup]="timersForm" (ngSubmit)="promptSaveTimers()">
+        <div class="row">
+          <label>OTP Expiry</label>
+          <input type="number"
+                 formControlName="otpExpiryMinutes"
+                 min="1" max="30" step="1" style="width:140px" />
+          <span class="hint">Allowed range after save: <b>1–30 minutes</b>. &nbsp;≈ {{ asHm(otpCtrl.value) }}</span>
+        </div>
+        <div class="hint error" *ngIf="otpCtrl.touched && otpCtrl.invalid">
+          <span *ngIf="(otpCtrl.value ?? 0) < 0">Cannot be negative.</span>
+          <span *ngIf="otpCtrl.errors?.['min']">Must be at least 1 minute.</span>
+          <span *ngIf="otpCtrl.errors?.['max']">Cannot exceed 30 minutes.</span>
+        </div>
+
+        <div class="row">
+          <label>Session Timeout</label>
+          <input type="number"
+                 formControlName="sessionTimeoutMinutes"
+                 min="5" max="240" step="1" style="width:140px" />
+          <span class="hint">Allowed range after save: <b>5–240 minutes</b>. &nbsp;≈ {{ asHm(sessCtrl.value) }}</span>
+        </div>
+        <div class="hint error" *ngIf="sessCtrl.touched && sessCtrl.invalid">
+          <span *ngIf="(sessCtrl.value ?? 0) < 0">Cannot be negative.</span>
+          <span *ngIf="sessCtrl.errors?.['min']">Must be at least 5 minutes.</span>
+          <span *ngIf="sessCtrl.errors?.['max']">Cannot exceed 240 minutes.</span>
+        </div>
+
+        <div class="row">
+          <button type="submit" class="btn btn-solid" [disabled]="timersForm.invalid || timersSaving">
+            {{ timersSaving ? 'Saving…' : 'Save' }}
+          </button>
+          <span *ngIf="policy?.updatedAtUtc" class="hint">Last updated: {{ policy?.updatedAtUtc }}</span>
+        </div>
+      </form>
+
+      <!-- CURRENT/PREVIEW (C.A.T) -->
+      <div class="hint" style="margin-top:.6rem;">
+        <div><b>Server time (C.A.T):</b> {{ formatCat(current?.nowUtc || nowTick) }}</div>
+
+        <div>
+          <b>OTP expires at:</b>
+          <ng-container *ngIf="current?.otpExpiresAtUtc; else otpCatPreview">
+            {{ formatCat(current?.otpExpiresAtUtc) }} ({{ formatRelativeShort(current?.otpExpiresAtUtc) }})
+          </ng-container>
+          <ng-template #otpCatPreview>
+            {{ otpPreview }}
+          </ng-template>
+        </div>
+
+        <div>
+          <b>Session expires at:</b>
+          <ng-container *ngIf="current?.sessionExpiresAtUtc; else sessCatPreview">
+            {{ formatCat(current?.sessionExpiresAtUtc) }} ({{ formatRelativeShort(current?.sessionExpiresAtUtc) }})
+          </ng-container>
+          <ng-template #sessCatPreview>
+            {{ sessionPreview }}
+          </ng-template>
+        </div>
+      </div>
+    </section>
+
+    <!-- Maintenance -->
+    <section class="card">
+      <header><h3>System Maintenance</h3></header>
+
+      <div class="row">
+        <button class="btn btn-solid" (click)="promptBackup()">Backup Now</button>
+        <span class="hint">{{ backupMsg }}</span>
+      </div>
+
+      <div class="row">
+        <label class="file">
+          <input #restoreInput type="file" accept=".bak" (change)="onRestoreFileSelected(restoreInput.files)" />
+          <span class="pick"><i class="fa fa-upload"></i> Choose file to restore…</span>
+        </label>
+        <div *ngIf="restoring" class="progress">Upload: {{ restoreProgress }}%</div>
+        <div class="hint">{{ restoreMsg }}</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- NEW: Roles & Access -->
+  <section class="card">
+    <header>
+      <h3>Roles & Access</h3>
+      <span class="hint" *ngIf="accessSaving">Saving…</span>
+    </header>
+
+    <div class="muted" style="margin:.25rem 0 .6rem 0;">
+      Toggle which <b>roles</b> can see/use each feature in the admin UI.
+    </div>
+
+    <div *ngIf="accessLoading" class="muted">Loading access matrix…</div>
+    <div *ngIf="!accessLoading && accessError" class="hint error">{{ accessError }}</div>
+
+    <div class="table-wrap" *ngIf="!accessLoading && !accessError">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th *ngFor="let r of roles">{{ r }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of accessRows">
+            <td>{{ row.label }}</td>
+            <td *ngFor="let r of roles">
+              <input
+                #cb
+                type="checkbox"
+                [checked]="row.perms[r]"
+                (change)="onToggleRole(row, r, cb.checked)" />
+            </td>
+          </tr>
+          <tr *ngIf="accessRows.length === 0">
+            <td [attr.colspan]="1 + roles.length" class="muted">No features configured</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="row" style="margin-top:.6rem;">
+        <button class="btn btn-solid" (click)="saveAccess()" [disabled]="accessSaving">Save</button>
+        <button class="btn btn-outline" (click)="resetAccessLocal()" [disabled]="accessSaving || accessLoading">Reload</button>
+        <span class="hint">{{ accessMsg }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM: Audit -->
+  <section class="card" *ngIf="auditEnabled">
+    <header><h3>Audit Trail</h3></header>
+
+    <div class="row" style="margin-top:.2rem;">
+      <!-- C.A.T input placeholders -->
+      <input placeholder="From (C.A.T yyyy-mm-dd[ HH:mm[:ss]])" [(ngModel)]="auditFilters.from" name="from" />
+      <input placeholder="To (C.A.T yyyy-mm-dd[ HH:mm[:ss]])"   [(ngModel)]="auditFilters.to"   name="to" />
+      <input placeholder="User email"     [(ngModel)]="auditFilters.user"   name="user" />
+      <input placeholder="Action"         [(ngModel)]="auditFilters.action" name="action" />
+      <input placeholder="Entity"         [(ngModel)]="auditFilters.entity" name="entity" />
+      <button class="btn btn-solid" (click)="loadAudit(1)" [disabled]="auditLoading">Search</button>
+      <button class="btn btn-outline" (click)="clearAuditFilters()" [disabled]="auditLoading">Clear</button>
+    </div>
+
+    <div class="muted" style="margin:.25rem 0 .5rem 0;">
+      Displayed times are in <b>C.A.T (UTC+02:00)</b>. Filters expect <b>C.A.T</b> too
+      (e.g. <code>2025-09-03 21:41:34</code>).
+    </div>
+
+    <div *ngIf="auditLoading" class="muted">Loading audit…</div>
+
+    <div class="table-wrap" *ngIf="!auditLoading">
+      <table>
+        <thead>
+          <tr>
+            <th>Time (C.A.T)</th><th>User</th><th>Action</th><th>Entity</th><th>EntityId</th><th>Critical</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of auditItems">
+            <td>{{ formatCat(a.utcTimestamp) }}</td>
+            <td>
+              <div><strong *ngIf="a.userDisplay; else onlyEmail">{{ a.userDisplay }}</strong></div>
+              <div class="muted" *ngIf="a.userEmail">{{ a.userEmail }}</div>
+              <ng-template #onlyEmail><span>{{ a.userEmail || '—' }}</span></ng-template>
+            </td>
+            <td>{{ a.action }}</td>
+            <td>{{ a.entity }}</td>
+            <td>{{ a.entityId || '—' }}</td>
+            <td>{{ a.criticalValue || '—' }}</td>
+          </tr>
+          <tr *ngIf="auditItems.length === 0">
+            <td colspan="6" class="muted">No results</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pager" *ngIf="auditTotal > auditPageSize">
+        <button class="page-btn" (click)="loadAudit(auditPage-1)" [disabled]="auditPage<=1">Prev</button>
+        <span class="muted">Page {{auditPage}} / {{ Math.ceil(auditTotal / auditPageSize) }}</span>
+        <button class="page-btn" (click)="loadAudit(auditPage+1)" [disabled]="auditPage >= Math.ceil(auditTotal / auditPageSize)">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Confirm -->
+  <confirm-dialog
+    *ngIf="confirming"
+    [message]="confirmMessage"
+    (confirm)="onConfirm()"
+    (cancel)="onCancel()">
+  </confirm-dialog>
+</div>

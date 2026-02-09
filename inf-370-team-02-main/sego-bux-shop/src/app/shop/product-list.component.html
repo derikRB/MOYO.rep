@@ -1,0 +1,102 @@
+<div class="product-list">
+  <!-- Section title -->
+  <div class="section-title-container">
+    <h2 class="section-title">Shop Our Products</h2>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="product-filter-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      (input)="onSearchChange()"
+      placeholder="Search products…"
+      class="form-control"
+    />
+
+    <select [(ngModel)]="selectedCategoryID" (change)="onCategoryChange()" class="form-control">
+      <option [ngValue]="null">All Categories</option>
+      <option *ngFor="let cat of categories" [ngValue]="cat.categoryID">
+        {{ cat.categoryName }}
+      </option>
+    </select>
+
+    <select [(ngModel)]="selectedTypeID" (change)="onTypeChange()" class="form-control">
+      <option [ngValue]="null">All Types</option>
+      <option *ngFor="let type of productTypes" [ngValue]="type.productTypeID">
+        {{ type.productTypeName }}
+      </option>
+    </select>
+
+    <select [(ngModel)]="selectedPriceRange" (change)="onPriceChange()" class="form-control">
+      <option value="">Any Price</option>
+      <option value="0-100">R0 – R100</option>
+      <option value="100-500">R100 – R500</option>
+      <option value="500-1000">R500 – R1000</option>
+      <option value="1000-100000">Above R1000</option>
+    </select>
+  </div>
+
+  <!-- Masonry grid -->
+  <div #grid class="product-grid">
+    <a *ngFor="let p of filteredProducts | paginate: page : pageSize; let i = index"
+       [routerLink]="['/products', p.productID]"
+       style="text-decoration: none; color: inherit;">
+      <div
+        class="product-card"
+        [ngClass]="{
+          'span-large': i % 7 === 0,
+          'span-medium': i % 7 === 3,
+          'span-tall': i % 7 === 5
+        }"
+        (mouseenter)="hoveredProductID = p.productID"
+        (mouseleave)="hoveredProductID = null"
+        style="position: relative;"
+      >
+        <img
+          class="product-img"
+          [src]="
+            hoveredProductID === p.productID && getSecondaryImageUrl(p)
+              ? getSecondaryImageUrl(p)
+              : getImageUrl(p)
+          "
+          [alt]="p.name"
+          loading="lazy"
+        />
+        <h4>{{ p.name }}</h4>
+        <p class="desc">{{ p.description }}</p>
+        <div class="card-footer">
+          <span class="price">R{{ p.price }}</span>
+          <button
+            class="icon-button"
+            (click)="addToCart(p); $event.stopPropagation(); $event.preventDefault();"
+            aria-label="Add to cart"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M7 18c-1.1 0-1.99.9-1.99
+                   2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10
+                   0c-1.1 0-1.99.9-1.99
+                   2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16
+                   14l.94-2h7.45c.75 0 1.41-.41
+                   1.75-1.03L21 4H5.21l-.94-2H1v2h2l3.6
+                   7.59-1.35 2.44C4.52 14.37 4.78
+                   15 5.31 15H19v-2H7.42l-.26-.59L7.16 14z"
+              />
+            </svg>
+          </button>
+        </div>
+        <span *ngIf="isLowStock(p)" class="stock-label-bottom">
+          Only {{ p.stockQuantity }} left in stock!
+        </span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination
+    [page]="page"
+    [totalPages]="totalPages"
+    (pageChange)="page = $event"
+  ></app-pagination>
+</div>

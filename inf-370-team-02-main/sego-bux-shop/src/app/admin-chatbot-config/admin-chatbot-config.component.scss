@@ -1,0 +1,103 @@
+@use "sass:color";
+@use '../../styles/variables' as *;
+
+.chatbot-config {
+  padding: 2rem;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  max-width: 720px;
+  margin: 2.5rem auto;
+
+  h2 {
+    color: $primary-pink;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .subhead {
+    margin-top: .75rem;
+    color: color.adjust($primary-pink, $lightness: -8%);
+  }
+
+  .form-group {
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: color.adjust($primary-pink, $lightness: -20%);
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color .2s;
+
+      &:focus {
+        border-color: $primary-pink;
+        outline: none;
+      }
+    }
+  }
+
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .setting-divider {
+    height: 1px;
+    background: #eee;
+    margin: 16px 0;
+  }
+
+  .hint { color: #666; margin-top: 8px; }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+  }
+
+  .btn-pink {
+    background: $primary-pink;
+    color: $white;
+    border: none;
+    padding: 0.8rem 1.8rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .22s, box-shadow .22s;
+
+    &:hover:not(:disabled) {
+      background: color.adjust($primary-pink, $lightness: -15%);
+      box-shadow: 0 4px 20px rgba($primary-pink, 0.3);
+    }
+
+    &:disabled {
+      background: $grey-bg;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+  }
+
+  /* 🔥 Same style as employees */
+  .field-error {
+    display: block;
+    margin-top: 6px;
+    color: #e91e63;
+    font-weight: 700;
+  }
+
+  .was-submitted input.ng-invalid,
+  input.ng-invalid.ng-touched {
+    border-color: #e91e63 !important;
+    background: #fff2f8 !important;
+  }
+}

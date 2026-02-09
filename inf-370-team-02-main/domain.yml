@@ -1,0 +1,114 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - ask_customization_logo
+  - ask_add_text
+  - ask_material
+  - ask_lead_time
+  - ask_international_shipping
+  - ask_cleaning
+  - ask_return_policy
+  - ask_payment
+  - ask_bulk_discount
+  - ask_confirmation_email
+  - show_products
+  - provide_product_name
+  - provide_customization
+  - provide_quantity
+  - provide_delivery_address
+  - calculate_delivery_fee
+  - place_order
+  - payment_issue
+  - fallback_contact
+  - out_of_scope
+  - nlu_fallback
+
+slots:
+  product_name:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: product_name
+  customization:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: customization
+  quantity:
+    type: float
+    mappings:
+      - type: from_entity
+        entity: quantity
+  delivery_address:
+    type: text
+    mappings:
+      - type: from_text
+        not_intent: out_of_scope
+  delivery_fee:
+    type: float
+    mappings: []
+  distance:
+    type: float
+    mappings: []
+  user_email:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: user_email
+
+responses:
+  utter_greet:
+    - text: "Hey! How can I help you today?"
+  utter_goodbye:
+    - text: "Goodbye! Have a great day."
+  utter_ask_customization_logo:
+    - text: "Yes—select your item, then Customize → Upload Logo or Enter Text (max 30 chars)."
+  utter_ask_add_text:
+    - text: "Click Customize → Text, type up to 30 chars, choose font/color, then Save."
+  utter_ask_material:
+    - text: "All our tumblers are 304 stainless steel with a BPA‑free finish."
+  utter_ask_lead_time:
+    - text: "Production & shipping take 5–7 business days; tracking emailed once shipped."
+  utter_ask_international_shipping:
+    - text: "Yes, we ship worldwide. Rates vary by destination."
+  utter_ask_cleaning:
+    - text: "Hand wash with mild soap; avoid bleach and abrasive pads."
+  utter_ask_return_policy:
+    - text: "30‑day returns on non‑custom items; custom items final sale; 1‑year warranty."
+  utter_ask_payment:
+    - text: "We accept EFT, Visa, MasterCard, Snapscan, and PayPal (SSL‑secured)."
+  utter_ask_bulk_discount:
+    - text: "For 50+ units, email qwertify2025@gmail.com for a custom quote."
+  utter_ask_confirmation_email:
+    - text: "Check spam; if still missing, email qwertify2025@gmail.com."
+  utter_ask_product_name:
+    - text: "Which product would you like?"
+  utter_ask_customization:
+    - text: "How would you like to customize it?"
+  utter_ask_quantity:
+    - text: "How many units?"
+  utter_ask_delivery_address:
+    - text: "Please enter your delivery address."
+  utter_confirm_order:
+    - text: "Ready to confirm your order?"
+  utter_order_success:
+    - text: "Order placed! You’ll receive a confirmation email shortly."
+  utter_payment_issue:
+    - text: "Having trouble paying? Try another method or contact support."
+  utter_fallback:
+    - text: |
+        Sorry, I didn’t understand that. You could try again, or chat on <a href="https://wa.me/27817045588" target="_blank">WhatsApp</a> or <a href="mailto:qwertify2025@gmail.com">email</a>.
+
+actions:
+  - action_show_products
+  - action_product_details
+  - action_calculate_delivery_fee
+  - action_place_order
+  - action_get_whatsapp_contact
+  - action_custom_fallback
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

@@ -1,0 +1,44 @@
+<div class="feedback-container">
+  <h2>Give Us Your Feedback</h2>
+
+  <!-- show this banner if they've already given feedback -->
+  <div *ngIf="alreadyGiven" class="already-banner">
+    You have already submitted feedback for this order.
+  </div>
+
+  <!-- only show the form when !alreadyGiven -->
+  <form *ngIf="!alreadyGiven" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>
+      Order Number
+      <input formControlName="orderNumber" readonly />
+    </label>
+
+    <label>
+      Overall Experience
+      <select formControlName="rating">
+        <option value="" disabled>– choose –</option>
+        <option [value]="1">1 Star</option>
+        <option [value]="2">2 Stars</option>
+        <option [value]="3">3 Stars</option>
+        <option [value]="4">4 Stars</option>
+        <option [value]="5">5 Stars</option>
+      </select>
+    </label>
+
+    <label>
+      Comments
+      <textarea formControlName="comments" rows="4"></textarea>
+    </label>
+
+    <!-- inline checkbox + label -->
+    <div class="checkbox-inline">
+      <input type="checkbox" formControlName="recommend" id="recommend" />
+      <label for="recommend">Would you recommend us?</label>
+    </div>
+
+    <div class="buttons">
+      <button type="submit" [disabled]="form.invalid">Submit</button>
+      <button type="button" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>

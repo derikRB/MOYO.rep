@@ -1,0 +1,43 @@
+<div id="report-container" class="admin-reports-tabs p-4">
+  <h2 class="mb-4">Admin Reports Dashboard</h2>
+  <nav class="nav nav-tabs mb-3">
+    <a class="nav-link" [class.active]="activeTab==='dashboard'" (click)="setTab('dashboard')">Dashboard</a>
+    <a class="nav-link" [class.active]="activeTab==='sales'" (click)="setTab('sales')">Sales</a>
+    <a class="nav-link" [class.active]="activeTab==='orders'" (click)="setTab('orders')">Orders</a>
+    <a class="nav-link" [class.active]="activeTab==='byCustomer'" (click)="setTab('byCustomer')">Orders by Customer</a>
+    <a class="nav-link" [class.active]="activeTab==='stock'" (click)="setTab('stock')">Stock</a>
+    <a class="nav-link" [class.active]="activeTab==='stockTx'" (click)="setTab('stockTx')">Stock Transactions</a>
+    <a class="nav-link" [class.active]="activeTab==='management'" (click)="setTab('management')">Management</a>
+    <a class="nav-link" [class.active]="activeTab==='custom'" (click)="setTab('custom')">Custom</a>
+    <a class="nav-link" [class.active]="activeTab==='forecast'" (click)="setTab('forecast')">Stock Forecast</a>
+  </nav>
+  <div class="tab-content">
+    <div *ngIf="activeTab==='dashboard'">
+      <app-dashboard-report [sales]="sales" [financial]="financial" [date]="today" [userName]="userName"></app-dashboard-report>
+    </div>
+    <div *ngIf="activeTab==='sales'">
+      <app-sales-list-report [sales]="sales" [date]="today" [userName]="userName"></app-sales-list-report>
+    </div>
+    <div *ngIf="activeTab==='orders'">
+      <app-orders-list-report [orders]="orders" [date]="today" [userName]="userName"></app-orders-list-report>
+    </div>
+    <div *ngIf="activeTab==='byCustomer'">
+      <app-orders-by-customer-report [byCust]="byCust" [date]="today" [userName]="userName"></app-orders-by-customer-report>
+    </div>
+    <div *ngIf="activeTab==='stock'">
+      <app-stock-list-report [stock]="stock" [date]="today" [userName]="userName"></app-stock-list-report>
+    </div>
+    <div *ngIf="activeTab==='stockTx'">
+      <app-stock-transactions-report [stockTx]="stockTx" [date]="today" [userName]="userName"></app-stock-transactions-report>
+    </div>
+    <div *ngIf="activeTab==='management'">
+      <app-management-report [date]="today" [userName]="userName"></app-management-report>
+    </div>
+    <div *ngIf="activeTab==='custom'">
+      <app-custom-report [sales]="sales" [date]="today" [userName]="userName" [fromDate]="fromDate" [toDate]="toDate" (applyFilter)="applyFilter($event)"></app-custom-report>
+    </div>
+    <div *ngIf="activeTab==='forecast'">
+      <app-stock-forecast-report [stockForecast]="stockForecast" [date]="today" [userName]="userName"></app-stock-forecast-report>
+    </div>
+  </div>
+</div>

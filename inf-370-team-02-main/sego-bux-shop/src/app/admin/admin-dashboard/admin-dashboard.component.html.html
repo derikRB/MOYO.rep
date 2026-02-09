@@ -1,0 +1,17 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <app-admin-sidebar [collapsed]="sidebarCollapsed"></app-admin-sidebar>
+
+  <!-- Main admin content -->
+  <div class="admin-content">
+    <!-- Hamburger button (visible on mobile only) -->
+    <button class="sidebar-toggle" (click)="sidebarCollapsed = !sidebarCollapsed">
+      <i class="fas" [ngClass]="sidebarCollapsed ? 'fa-bars' : 'fa-times'"></i>
+    </button>
+    <app-admin-sidebar [collapsed]="sidebarCollapsed" (collapsedChange)="sidebarCollapsed = $event"></app-admin-sidebar>
+
+
+    <!-- Routed admin views -->
+    <router-outlet></router-outlet>
+  </div>
+</div>

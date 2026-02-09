@@ -1,0 +1,31 @@
+<!-- src/app/auth/auth-shell/auth-shell.component.html -->
+<div class="auth-shell-bg">
+  <div class="auth-shell-container" [ngClass]="mode">
+
+    <!-- LEFT PANEL -->
+    <div class="auth-panel panel-left">
+      <div class="panel-content">
+        <h1 *ngIf="mode==='login'">Welcome Back!</h1>
+        <p *ngIf="mode==='login'">Already have an account?</p>
+        <button class="panel-btn" *ngIf="mode==='login'" (click)="showRegister()">
+          Create Account
+        </button>
+
+        <h1 *ngIf="mode==='register'">Hello, Friend!</h1>
+        <p *ngIf="mode==='register'">Enter your details to start</p>
+        <button class="panel-btn" *ngIf="mode==='register'" (click)="showLogin()">
+          Sign In
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT FORM -->
+    <div class="auth-form-panel">
+      <div class="form-anim" [ngClass]="mode">
+        <!-- wherever the outlet is, login OR register will appear -->
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+
+  </div>
+</div>

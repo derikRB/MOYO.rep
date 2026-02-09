@@ -1,0 +1,42 @@
+<!-- <div>
+  <app-report-branding-header [date]="date" [userName]="userName"></app-report-branding-header>
+  <h2 style="font-weight:bold;">Stock Transactions Report</h2>
+  <div *ngFor="let group of grouped">
+    <h4 style="background:#FF5BAA;color:white;padding:8px 12px; margin-bottom:0;">{{ group.productName }}</h4>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="background:#FF5BAA;color:white;padding:8px;">TransactionID</th>
+          <th style="background:#FF5BAA;color:white;padding:8px;">Date</th>
+          <th style="background:#FF5BAA;color:white;padding:8px;">Quantity</th>
+          <th style="background:#FF5BAA;color:white;padding:8px;">Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tx of group.transactions">
+          <td style="padding:6px;">{{ tx.transactionID }}</td>
+          <td style="padding:6px;">{{ tx.date ? (tx.date | date:'short') : '-' }}</td>
+          <td style="padding:6px; text-align:right;">{{ tx.quantity }}</td>
+          <td style="padding:6px;">{{ tx.type }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="background:#FFDFEF;font-weight:bold;padding:8px;">Subtotal</td>
+          <td style="background:#FF5BAA;color:white;font-weight:bold;padding:8px;text-align:right;">{{ group.subtotal }}</td>
+          <td style="background:#FF5BAA;"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div style="margin-top:14px;">
+    <table style="width:100%;">
+      <tr>
+        <td colspan="2" style="background:#FFDFEF;font-weight:bold;padding:8px;">Grand Total</td>
+        <td style="background:#FF5BAA;color:white;font-weight:bold;padding:8px;text-align:right;">{{ grandTotal }}</td>
+        <td style="background:#FF5BAA;"></td>
+      </tr>
+    </table>
+  </div>
+  <button class="btn btn-primary" style="margin-top:18px;" (click)="exportPdf()">Export PDF</button>
+</div> -->

@@ -1,0 +1,27 @@
+<div class="help-modal">
+  <h2>System Help & FAQ</h2>
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Search help topics..."
+    (input)="searchHelp()"
+    class="help-search"
+  />
+
+  <div *ngFor="let section of filteredSections" class="help-section">
+    <h3>{{ section.title }}</h3>
+    <p>{{ section.content }}</p>
+  </div>
+
+  <hr />
+  <button (click)="openPDF()">Open Full Help (PDF)</button>
+  <button *ngIf="showPDF" (click)="closePDF()" style="margin-left:10px;">Close PDF</button>
+  <br />
+  <iframe
+    *ngIf="showPDF"
+    src="assets/YourFullHelp.pdf"
+    width="100%"
+    height="500px"
+    style="margin-top:10px;"
+  ></iframe>
+</div>

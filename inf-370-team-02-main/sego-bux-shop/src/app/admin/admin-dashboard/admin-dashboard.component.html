@@ -1,0 +1,32 @@
+<div class="admin-layout">
+  <!-- Desktop collapse toggle -->
+  <button
+    class="sidebar-collapse-toggle"
+    (click)="sidebarCollapsed = !sidebarCollapsed"
+    *ngIf="windowWidth > 900">
+    <i class="fas" [ngClass]="sidebarCollapsed ? 'fa-angle-right' : 'fa-angle-left'"></i>
+  </button>
+
+  <!-- Mobile hamburger -->
+  <button class="sidebar-toggle" (click)="sidebarOpen = !sidebarOpen" *ngIf="windowWidth <= 900">
+    <i class="fas" [ngClass]="sidebarOpen ? 'fa-times' : 'fa-bars'"></i>
+  </button>
+
+  <!-- Fixed Sidebar -->
+  <app-admin-sidebar
+    [sidebarOpen]="sidebarOpen"
+    [collapsed]="sidebarCollapsed"
+    [lowStockCount]="lowStockCount"
+    (closeSidebar)="sidebarOpen = false">
+  </app-admin-sidebar>
+
+  <!-- NOTE: use 'sidebar-collapsed' to match CSS below -->
+  <div class="admin-content"
+       [class.sidebar-collapsed]="sidebarCollapsed">
+    <router-outlet></router-outlet>
+  </div>
+
+  <div *ngIf="!sidebarCollapsed && sidebarOpen && windowWidth <= 900"
+       class="sidebar-overlay"
+       (click)="sidebarOpen = false"></div>
+</div>

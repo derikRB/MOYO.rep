@@ -1,0 +1,65 @@
+<div class="calendar-card">
+  <div class="calendar-header">
+    <div class="left">
+      <button class="btn-nav" (click)="prevMonth()" aria-label="Previous month">‹</button>
+      <h3 class="title">{{ monthLabel }}</h3>
+      <button class="btn-nav" (click)="nextMonth()" aria-label="Next month">›</button>
+    </div>
+
+    <div class="right">
+      <select class="picker" [ngModel]="currentMonth" (ngModelChange)="onMonthChange($event)">
+        <option *ngFor="let m of months; index as i" [ngValue]="i">{{ m }}</option>
+      </select>
+
+      <select class="picker year" [ngModel]="currentYear" (ngModelChange)="onYearChange($event)">
+        <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+      </select>
+
+      <button class="btn-ghost" (click)="goToday()">Today</button>
+    </div>
+  </div>
+
+  <table class="calendar-table">
+    <thead>
+      <tr>
+        <th *ngFor="let d of days">{{ d }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let week of weeks">
+        <td *ngFor="let day of week"
+            [ngClass]="getCellClass(day)"
+            (click)="selectOrder(day)">
+          <div class="date" *ngIf="day">{{ day.getDate() }}</div>
+
+          <!-- THE BADGE NOW DISPLAYS DELIVERY STATUS & USES DELIVERY STATUS COLOUR -->
+          <div *ngFor="let order of getOrdersForDay(day)"
+               [ngClass]="getDeliveryStatusClass(order)"
+               (click)="openOrder(order, $event)"
+               (keydown.enter)="openOrder(order, $event)"
+               tabindex="0"
+               role="button"
+               aria-label="View order #{{order.orderID}} ({{order.deliveryStatus}})">
+            <span class="badge-id">#{{order.orderID}}</span>
+            <span class="badge-status">{{order.deliveryStatus}}</span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Compact popup -->
+<div *ngIf="selectedOrder" class="calendar-order-popup">
+  <div class="popup-head">
+    <strong>Order #{{selectedOrder.orderID}}</strong>
+    <button class="btn-x" (click)="closePopup()">✕</button>
+  </div>
+  <div class="popup-body">
+    <div><b>Status:</b> {{selectedOrder.orderStatusName}}</div>
+    <div><b>Delivery:</b> {{selectedOrder.deliveryStatus}}</div>
+    <div><b>Expected:</b> {{(selectedOrder.expectedDeliveryDate || selectedOrder.orderDate) | date:'EEE, dd MMM'}}</div>
+    <div *ngIf="selectedOrder.customerName"><b>Customer:</b> {{selectedOrder.customerName}}</div>
+    <div *ngIf="selectedOrder.deliveryAddress"><b>Address:</b> {{selectedOrder.deliveryAddress}}</div>
+  </div>
+</div>

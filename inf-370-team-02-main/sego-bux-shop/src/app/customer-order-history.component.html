@@ -1,0 +1,22 @@
+<p>customer-order-history works!</p>
+<div class="order-history">
+  <h2>Your Orders</h2>
+
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="!loading && orders.length === 0">You have no orders yet.</div>
+
+  <div *ngFor="let order of orders" class="order-box">
+    <h3>Order #{{ order.orderID }}</h3>
+    <p>Status: <strong>{{ order.statusName }}</strong></p>
+    <p>Total: {{ formatCurrency(order.totalPrice) }}</p>
+    <p>Delivery Method: {{ order.deliveryMethod }}</p>
+    <p>Courier: {{ order.courierProvider || 'N/A' }}</p>
+    <p>Placed on: {{ order.createdAt | date:'medium' }}</p>
+
+    <ul>
+      <li *ngFor="let item of order.orderLines">
+        {{ item.productName }} x{{ item.quantity }}
+      </li>
+    </ul>
+  </div>
+</div>

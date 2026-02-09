@@ -1,0 +1,115 @@
+@use "sass:color";
+@use '../../styles/variables' as *;
+
+.sysdash{
+  max-width: 1150px;
+  margin: 1.2rem auto 2rem;
+  padding: 0 .8rem 2rem;
+}
+
+/* --- Cards (pink theme) --- */
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:1.1rem 1.2rem;
+  box-shadow:0 4px 18px #e91e6340;
+  border:1px solid #ffe0f3;
+  margin-bottom:1rem;
+
+  header{
+    display:flex; align-items:center; justify-content:space-between; gap:.8rem;
+    margin-bottom:.7rem;
+    h3{ margin:0; color:$primary-pink; font-weight:800; font-size:1.4rem; letter-spacing:.2px; }
+  }
+}
+
+/* two-up middle row */
+.two-col{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:1rem;
+}
+@media (max-width: 900px){
+  .two-col{ grid-template-columns: 1fr; }
+}
+
+/* Inputs / selects */
+input[type="number"], input[type="text"], input[type="date"], select{
+  border:1.3px solid #ffd6f4;
+  border-radius:9px;
+  padding:.55rem .8rem;
+  background:#faf5f9c7;
+  color:#222;
+  font-size:1rem;
+  &:focus{ outline:none; border-color:$primary-pink; background:#fff6fc; }
+}
+
+/* Rows */
+.row{ display:flex; align-items:center; gap:.7rem; margin:.55rem 0; flex-wrap:wrap; }
+label{ width:220px; font-weight:700; color:#333; }
+
+/* Buttons */
+.btn{ display:inline-flex; align-items:center; gap:.45rem; font-weight:800; font-size:1rem;
+      border-radius:10px; padding:.6rem 1.05rem; cursor:pointer; text-decoration:none;
+      transition:background .14s, color .14s, box-shadow .14s; }
+.btn-solid{ background:$primary-pink; color:#fff; border:none;
+  &:hover{ background:color.adjust($primary-pink, $lightness:-10%); }
+}
+.btn-outline{ background:#fff; color:$primary-pink; border:1.6px solid #ffd0eb;
+  &:hover{ background:#ffe7f6; }
+}
+.btn-link{ background:transparent; border:none; color:$primary-pink; font-weight:800; cursor:pointer;
+  &:hover{ text-decoration:underline; }
+}
+.btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+/* Small helper text */
+.hint, .muted{ color:#888; font-size:.95rem; }
+
+/* File input appearance */
+.file{ display:inline-block; }
+.file input[type="file"]{ display:none; }
+.file .pick{
+  @extend .btn;
+  @extend .btn-outline;
+  padding:.55rem 1rem;
+}
+
+/* Metrics card tighten spacing */
+.metrics-card{ padding-top:1.0rem; }
+
+/* Table styles for both Access & Audit */
+.table-wrap{ overflow:auto; border-radius:12px; box-shadow:0 2px 12px #e91e6330; }
+table{ width:100%; border-collapse:collapse; font-size:.98rem; }
+thead tr{ background:$primary-pink; color:#fff; }
+th, td{ padding:.7rem .8rem; border-bottom:1px solid #f7d4e5; text-align:left; }
+tbody tr:hover{ background:#fff2fa; }
+
+/* Pager */
+.pager{
+  display:flex; gap:.6rem; align-items:center; justify-content:flex-end; margin-top:.8rem; flex-wrap:wrap;
+  .page-btn{
+    border:1.5px solid #ff7aa9; background:#fff; color:#e91e63; border-radius:10px; padding:.45em 1.0em; font-weight:700;
+    &.active{ background:#e91e63; color:#fff; }
+    &:disabled{ opacity:.45; cursor:not-allowed; }
+  }
+}
+
+/* Tiny progress text */
+.progress{ font-size:.92rem; color:#111827; }
+
+/* Make long content comfy on phones */
+@media (max-width: 640px){
+  .sysdash{ padding: 0 .5rem 1.4rem; }
+  label{ width:100%; }
+  .row{ align-items:flex-start; }
+}
+
+/* Errors inline, matching brand pink */
+.hint.error { color: #e91e63; font-weight: 700; }
+
+/* Field invalid affordance */
+input.ng-invalid.ng-touched {
+  border-color: #e91e63;
+  box-shadow: 0 0 0 2px rgba(233,30,99,.10);
+}

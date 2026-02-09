@@ -1,0 +1,58 @@
+@use '../../../styles/variables' as *;
+
+.form-container {
+  max-width: 420px;
+  margin: 2.5rem auto;
+  background: $grey-bg;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+
+  h2 { color: $primary-pink; text-align: center; margin-bottom: 1rem; }
+
+  .form-control {
+    padding: .7rem 1rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;
+    &:focus { outline: none; border-color: $primary-pink; }
+  }
+
+  /* Primary CTA — pill, matches Sign In */
+  .btn-primary{
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 180px; height: 56px; padding: 0 24px;
+    border: none; border-radius: 9999px; background: $primary-pink; color: #fff;
+    font-weight: 700; font-size: 1.125rem; letter-spacing: .2px;
+    box-shadow: 0 12px 22px rgba(233, 27, 116, 0.28), 0 2px 6px rgba(0,0,0,.06);
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease, opacity .2s ease;
+    width: auto; margin-top: 1rem;
+  }
+  .btn-primary:hover{ transform: translateY(-1px); box-shadow: 0 16px 28px rgba(233,27,116,.34), 0 4px 8px rgba(0,0,0,.08); }
+  .btn-primary:active{ transform: translateY(0); box-shadow: 0 6px 14px rgba(233,27,116,.26), 0 2px 6px rgba(0,0,0,.10); }
+  .btn-primary:disabled{ opacity: .6; cursor: not-allowed; box-shadow: none; }
+
+  .btn-link {
+    color: $primary-pink; background: transparent; border: none; padding: 0;
+    text-align: left; font-size: 1rem; cursor: pointer; margin-top: .5rem;
+    &:disabled { opacity: .6; cursor: not-allowed; }
+  }
+
+  .alert { font-size: .95rem; }
+}
+
+/* One-time arrival loader overlay */
+.route-loader{
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.82);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+}
+
+.spinner{
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 4px solid #ffd6f1; border-top-color: $primary-pink;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 8px 24px rgba(233,27,116,.2);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

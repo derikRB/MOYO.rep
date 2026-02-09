@@ -1,0 +1,56 @@
+<div class="product-detail-container" *ngIf="!isLoading">
+  <ng-container *ngIf="product; else notFound">
+    <div class="product-detail">
+      <img
+        class="product-detail-img"
+        [src]="product.productImages.length
+          ? productService.imageFullUrl(product.productImages[0])
+          : 'assets/logo.png'"
+        [alt]="product.name"
+      />
+      <div class="detail-info">
+        <h1>{{ product.name }}</h1>
+
+        <!-- AVG RATING BLOCK: insert here -->
+        <div class="avg-rating" *ngIf="reviews.length > 0; else noRating">
+          <span class="stars">
+            <ng-container *ngFor="let s of [1,2,3,4,5]">
+              <i
+                class="fa"
+                [class.fa-star]="s <= Math.round(averageRating)"
+                [class.fa-star-o]="s > Math.round(averageRating)">
+              </i>
+            </ng-container>
+          </span>
+          <span class="avg-rating-num">{{ averageRating | number:'1.1-2' }} / 5</span>
+          <span class="review-count">
+            ({{ reviews.length }} review{{ reviews.length > 1 ? 's' : '' }})
+          </span>
+        </div>
+        <ng-template #noRating>
+          <div class="avg-rating">No ratings yet</div>
+        </ng-template>
+        <!-- END AVG RATING BLOCK -->
+
+        <div class="price">R{{ product.price }}</div>
+        <p class="desc">{{ product.description }}</p>
+        <div><b>Type:</b> {{ product.productType?.productTypeName }}</div>
+        <!-- <div><b>Stock:</b> {{ product.stockQuantity }}</div> -->
+        <!-- (Optional) Add to Cart button here -->
+         <button class="add-cart-btn"
+                (click)="addToCart()"
+                [disabled]="!product || product.stockQuantity < 1">
+          <i class="fa fa-shopping-cart"></i>
+          Add to Cart
+        </button>
+      </div>
+    </div>
+    <hr />
+    <!-- PRODUCT REVIEWS COMPONENT (individual reviews list) -->
+    <app-product-reviews [productId]="product.productID"></app-product-reviews>
+  </ng-container>
+  <ng-template #notFound>
+    <div class="not-found">Product not found.</div>
+  </ng-template>
+</div>
+<div *ngIf="isLoading" class="loading">Loading product...</div>

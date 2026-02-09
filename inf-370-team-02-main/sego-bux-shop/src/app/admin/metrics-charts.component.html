@@ -1,0 +1,24 @@
+<div class="charts">
+  <div class="card">
+    <div class="card-header">
+      <h3>Orders by Status</h3>
+      <select [(ngModel)]="statusRange" (change)="refresh()">
+        <option value="today">Today</option>
+        <option value="7d">Last 7 days</option>
+      </select>
+    </div>
+    <canvas #statusCanvas height="160"></canvas>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Sales per Day (30d)</h3></div>
+    <canvas #salesCanvas height="160"></canvas>
+  </div>
+
+  <div class="card card--wide">
+    <div class="card-header"><h3>Low Stock vs Threshold</h3></div>
+    <div class="chart-bounded">
+      <canvas #stockCanvas></canvas>
+    </div>
+  </div>
+</div>

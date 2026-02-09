@@ -1,0 +1,140 @@
+<div class="checkout-main">
+  <!-- LEFT: Customer & Shipping -->
+  <div class="checkout-form">
+    <h3 class="section-title">Checkout</h3>
+    <form [formGroup]="deliveryForm"
+          (ngSubmit)="determineDelivery()"
+          class="delivery-form"
+          autocomplete="off">
+
+      <div class="info-group">
+        <label>Email</label>
+        <input type="email"
+               [value]="userEmail"
+               disabled
+               class="form-control" />
+      </div>
+
+      <div class="info-group-row">
+        <div class="info-group">
+          <label>First Name</label>
+          <input type="text"
+                 [value]="userFirstName"
+                 disabled
+                 class="form-control" />
+        </div>
+        <div class="info-group">
+          <label>Last Name</label>
+          <input type="text"
+                 [value]="userLastName"
+                 disabled
+                 class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Address</label>
+          <input formControlName="address" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input formControlName="city" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Suburb</label>
+          <input formControlName="suburb" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Province</label>
+          <input formControlName="province" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Postal Code</label>
+          <input formControlName="postalCode" class="form-control" />
+        </div>
+      </div>
+
+      <button type="submit" class="delivery-btn" [disabled]="deliveryForm.invalid">
+        Calculate Delivery
+      </button>
+    </form>
+
+    <div *ngIf="chosenDelivery" class="chosen-delivery">
+      <strong>Delivery Method:</strong> {{ chosenDelivery }}
+      <span *ngIf="chosenDistance">
+        ({{ chosenDistance | number:'1.1-1' }} km)
+      </span>
+    </div>
+
+    <!-- DYNAMIC help text -->
+    <div class="delivery-explanation">
+      <b>How is shipping calculated?</b><br>
+      Your delivery method and shipping cost are automatically
+      determined by your distance from our central office.<br>
+      Distances above <b>{{ policy.thresholdKm }}</b> km receive a flat delivery rate of
+      <b>R{{ policy.flatShippingFee | number:'1.2-2' }}</b>.
+      <span style="color:#e60073;font-weight:600;">
+        Shipping is included in your final total.
+      </span>
+    </div>
+  </div>
+
+  <!-- RIGHT: Order Summary -->
+  <div class="checkout-summary">
+    <h4 class="summary-title">Order Summary</h4>
+
+    <div *ngFor="let i of cartItems" class="summary-item">
+      <img [src]="i.imageUrl || 'assets/logo.png'"
+           alt=""
+           width="48"
+           height="48"
+           class="summary-img" />
+      <div class="summary-details">
+        <div class="summary-name">{{ i.name }}</div>
+        <div class="summary-qty">Qty: {{ i.quantity }}</div>
+      </div>
+      <div class="summary-price">
+        R{{ (i.price * i.quantity) | number:'1.2-2' }}
+      </div>
+    </div>
+
+    <div class="cart-summary-totals">
+      <div class="summary-row">
+        <span>SubTotal Excl :</span>
+        <span class="amount">
+          {{ total | currency:'ZAR':'symbol':'1.2-2' }}
+        </span>
+      </div>
+      <div class="summary-row">
+        <span>VAT Amount ({{ vatRate }}%) :</span>
+        <span class="amount vat">
+          {{ vat | currency:'ZAR':'symbol':'1.2-2' }}
+        </span>
+      </div>
+      <div class="summary-row">
+        <span>Shipping :</span>
+        <span class="amount shipping">
+          {{ shipping | currency:'ZAR':'symbol':'1.2-2' }}
+        </span>
+      </div>
+      <div class="summary-row total-row">
+        <span>Total Due :</span>
+        <span class="amount total">
+          {{ grand | currency:'ZAR':'symbol':'1.2-2' }}
+        </span>
+      </div>
+    </div>
+
+    <button class="checkout-btn"
+            type="button"
+            (click)="placeOrder()
+            "
+            [disabled]="isSending || !chosenDelivery">
+      Place Order
+    </button>
+  </div>
+</div>

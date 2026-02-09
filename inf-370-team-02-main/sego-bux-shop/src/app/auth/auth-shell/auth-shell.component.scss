@@ -1,0 +1,111 @@
+@use "sass:color";
+@use '../../../styles/variables' as *;
+
+.auth-shell-bg {
+  min-height: 100vh;
+  background: radial-gradient(ellipse 60% 55% at 60% 45%, #ffd0ef 70%, #fff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.auth-shell-container {
+  display: flex;
+  width: 940px;
+  min-height: 600px;
+  box-shadow: 0 10px 40px #e91e6366;
+  border-radius: 24px;
+  background: $white;
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.3s;
+}
+.auth-panel {
+  width: 38%;
+  min-width: 320px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 1px 0 8px #ffd0ef1a;
+  z-index: 2;
+  .panel-content {
+    text-align: center;
+    padding: 2rem 2rem;
+    h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: $primary-pink;
+      margin-bottom: 0.4em;
+    }
+    p {
+      color: #888;
+      margin-bottom: 2em;
+      font-size: 1.1rem;
+    }
+    .panel-btn {
+      background: $primary-pink;
+      color: $white;
+      font-weight: bold;
+      border: none;
+      border-radius: 2em;
+      padding: 0.9em 2.5em;
+      font-size: 1.2em;
+      box-shadow: 0 2px 18px #e91e6350;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.18s;
+      &:hover {
+        background: color.adjust($primary-pink, $lightness: -10%);
+        transform: scale(1.04) translateY(-2px);
+      }
+    }
+  }
+}
+.auth-form-panel {
+  width: 62%;
+  background: #f9f9f9;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  position: relative;
+  transition: background 0.32s;
+  .form-anim {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // Animations: fade/slide in
+    &.login {
+      animation: slideRight 0.5s cubic-bezier(.8,-0.05,.29,1.11);
+    }
+    &.register {
+      animation: slideLeft 0.5s cubic-bezier(.8,-0.05,.29,1.11);
+    }
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(60px);}
+      to   { opacity: 1; transform: translateX(0);}
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-60px);}
+      to   { opacity: 1; transform: translateX(0);}
+    }
+  }
+}
+@media (max-width: 950px) {
+  .auth-shell-container {
+    flex-direction: column;
+    width: 100%;
+    max-width: none;      // allow it to truly go full‐width
+    min-height: auto;     // let content decide
+    padding: 1rem;        // give some breathing room
+    box-shadow: none;     // optional: remove heavy desktop shadow
+    border-radius: 0;     // optional: square off corners
+  }
+  .auth-panel,
+  .auth-form-panel {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+}
+

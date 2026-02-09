@@ -1,0 +1,56 @@
+<div class="low-stock-alerts">
+  <h2>Low‑Stock Alerts</h2>
+
+  <button
+    class="btn btn-secondary mb-3"
+    (click)="refresh()"
+  >
+    Check Now
+  </button>
+
+  <div class="history-table" *ngIf="alerts.length; else noAlerts">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Stock Qty</th>
+          <th>Alert Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of alerts">
+          <td>{{ a.product.name }}</td>
+          <td>{{ a.stockQuantity }}</td>
+          <td>{{ a.alertDate | date:'short' }}</td>
+          <td>
+            <button
+              *ngIf="!a.resolved"
+              class="btn btn-sm btn-resolve"
+              (click)="promptResolve(a.lowStockAlertId)"
+            >
+              Resolve
+            </button>
+            <span *ngIf="a.resolved" class="status-resolved">
+              Resolved
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #noAlerts>
+    <p class="no-alerts text-muted">
+      No low‑stock items.
+    </p>
+  </ng-template>
+
+  <!-- <confirm-dialog> must appear here so Angular knows you’re using it -->
+  <confirm-dialog
+    *ngIf="confirmingResolve"
+    [message]="confirmMessage"
+    (confirm)="onResolveConfirmed()"
+    (cancel)="onResolveCanceled()">
+  </confirm-dialog>
+</div>

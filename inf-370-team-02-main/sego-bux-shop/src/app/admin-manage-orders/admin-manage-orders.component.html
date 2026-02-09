@@ -1,0 +1,246 @@
+<h2>Manage Orders</h2>
+
+<!-- Search toolbar -->
+<div class="orders-filter-bar">
+  <input
+    class="orders-search"
+    type="text"
+    placeholder="Search by order #, status, customer name/email/phone, or address"
+    [(ngModel)]="query"
+    (ngModelChange)="onFilterChanged()"
+  />
+  <select class="orders-status" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChanged()">
+    <option [ngValue]="''">All statuses</option>
+    <option [ngValue]="'Pending'">Pending</option>
+    <option [ngValue]="'Processing'">Processing</option>
+    <option [ngValue]="'Shipped'">Shipped</option>
+    <option [ngValue]="'Delivered'">Delivered</option>
+  </select>
+  <button class="btn soft" (click)="query=''; statusFilter=''; onFilterChanged()">Clear</button>
+</div>
+
+<!-- Calendar -->
+<app-delivery-calendar [orders]="filteredOrders"></app-delivery-calendar>
+
+<div class="orders-table-container">
+  <div class="orders-table-header">
+    <div class="cell">#</div>
+    <div class="cell">Customer</div>
+    <div class="cell">Date</div>
+    <div class="cell">Total</div>
+    <div class="cell">Method</div>
+    <div class="cell">Status</div>
+    <div class="cell actions">Actions</div>
+  </div>
+
+  <div *ngFor="let o of filteredOrders | paginate:page:pageSize; trackBy: trackByOrderId" class="orders-table-row">
+    <div class="cell">{{ o.orderID }}</div>
+    <div class="cell customer-info">
+      <b>{{ o.customerName }}</b>
+      <div style="font-size:0.97em;color:#999;">{{ o.customerEmail }}</div>
+    </div>
+
+    <!-- C.A.T date + relative -->
+    <div class="cell">
+      {{ o.orderDate | catDate }}
+      <div class="muted">({{ o.orderDate | catRelative }})</div>
+    </div>
+
+    <div class="cell">
+      {{ o.totalPrice | currency:'ZAR':'symbol':'1.2-2':'en-ZA' }}
+    </div>
+    <div class="cell">{{ o.deliveryMethod }}</div>
+    <div class="cell">
+      <span class="status-chip" [ngClass]="getDisplayStatusClass(o)">
+        {{ getDisplayStatus(o) }}
+      </span>
+    </div>
+    <div class="cell actions">
+      <button class="icon-btn" (click)="openOrderModal(o)">
+        <svg width="22" height="22" fill="none" stroke="#e91e63" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="10" r="3"></circle>
+          <path d="M12 13v4"></path>
+        </svg>
+        View
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="(filteredOrders | paginate:page:pageSize).length === 0" class="muted" style="padding:12px;">
+    No results match your filters.
+  </div>
+</div>
+
+<app-pagination [page]="page" [totalPages]="totalPages" (pageChange)="page=$event"></app-pagination>
+
+<!-- Standalone image preview -->
+<div *ngIf="modalImageUrl" class="img-overlay" (click)="closeImageModal()" role="dialog" aria-modal="true">
+  <div class="img-card" (click)="$event.stopPropagation()">
+    <button class="img-close" (click)="closeImageModal()" aria-label="Close">&times;</button>
+    <img class="img-figure" [src]="modalImageUrl" alt="Preview" />
+    <button class="img-download" (click)="downloadImage(modalImageUrl!, 'order-image')">Download</button>
+  </div>
+</div>
+
+<!-- Order modal -->
+<div *ngIf="selectedOrder" class="modal-backdrop" (click)="closeOrderModal()">
+  <div class="modal-content order-modal-content" (click)="$event.stopPropagation()">
+
+    <h3 class="modal-title">Order #{{ selectedOrder.orderID }} Details</h3>
+
+    <!-- Summary grid -->
+    <div class="summary-grid">
+      <div class="kv"><div class="k">Customer</div><div class="v">{{ selectedOrder.customerName }}</div></div>
+      <div class="kv"><div class="k">Email</div><div class="v">{{ selectedOrder.customerEmail }}</div></div>
+      <div class="kv"><div class="k">Phone</div><div class="v">{{ selectedOrder.customerPhone }}</div></div>
+
+      <!-- C.A.T date + relative -->
+      <div class="kv">
+        <div class="k">Date</div>
+        <div class="v">
+          {{ selectedOrder.orderDate | catDate }}
+          <span class="muted">({{ selectedOrder.orderDate | catRelative }})</span>
+        </div>
+      </div>
+
+      <div class="kv"><div class="k">Total</div><div class="v total">{{ selectedOrder.totalPrice | currency:'ZAR':'symbol':'1.2-2':'en-ZA' }}</div></div>
+      <div class="kv"><div class="k">Delivery</div><div class="v">{{ selectedOrder.deliveryMethod }}</div></div>
+      <div class="kv"><div class="k">Courier</div><div class="v">{{ selectedOrder.courierProvider }}</div></div>
+      <div class="kv span2"><div class="k">Address</div><div class="v">{{ selectedOrder.deliveryAddress }}</div></div>
+    </div>
+
+    <!-- Order Status -->
+    <div class="form-row">
+      <label>Order Status</label>
+      <div class="field-group">
+        <select [(ngModel)]="selectedOrder.orderStatusID">
+          <option *ngFor="let s of statusOptions"
+                  [ngValue]="s.id"
+                  [disabled]="isOrderStatusOptionDisabled(selectedOrder, s.id)">
+            {{ s.name }}
+          </option>
+        </select>
+<button 
+  class="btn primary" 
+  (click)="promptSaveStatus(selectedOrder!)" 
+  [disabled]="isSaveStatusDisabled(selectedOrder)">
+  Save Status
+</button>
+        <span class="hint-inline">Progress is sequential. You can only move to the next stage and cannot go back.</span>
+      </div>
+    </div>
+
+    <!-- Waybill -->
+    <div class="form-row">
+      <label>Waybill</label>
+      <div class="field-group">
+        <input [(ngModel)]="selectedOrder.waybillNumber"
+               #waybillInput
+               (ngModelChange)="onWaybillChanged()"
+               [disabled]="!canEditDelivery(selectedOrder)"
+               [ngClass]="{'invalid': requiresWaybill(selectedOrder) && !isWaybillValid(selectedOrder) && attemptedDeliverySave}"
+               placeholder="Waybill # (min 5 chars)"/>
+        <!-- NEW: show helper when blank; escalate to hard error if too short -->
+        <span *ngIf="requiresWaybill(selectedOrder) && isWaybillEmpty(selectedOrder)" class="error-inline">
+          Please enter a waybill.
+        </span>
+        <span *ngIf="requiresWaybill(selectedOrder) && !isWaybillEmpty(selectedOrder) && !isWaybillValid(selectedOrder)"
+              class="error-inline">
+          Waybill must be at least 5 characters.
+        </span>
+      </div>
+    </div>
+
+    <!-- Delivery Status -->
+    <div class="form-row">
+      <label>Delivery Status</label>
+      <div class="field-group">
+        <select [(ngModel)]="selectedOrder.deliveryStatus"
+                [disabled]="!canEditDelivery(selectedOrder)"
+                (ngModelChange)="onDeliveryStatusChange()">
+          <option *ngFor="let d of deliveryOptionsOrdered"
+                  [value]="d"
+                  [disabled]="isDeliveryOptionDisabled(selectedOrder, d)">
+            {{ d }}
+          </option>
+        </select>
+        <button class="btn primary"
+                [disabled]="!canSaveDelivery(selectedOrder)"
+                (click)="promptSaveDelivery(selectedOrder!)">
+          Save Delivery
+        </button>
+        <span class="hint-inline">Enabled after Order Status reaches <b>Shipped</b>. Also sequential.</span>
+      </div>
+    </div>
+
+    <!-- Items -->
+    <div class="section-title">Items</div>
+
+    <div *ngFor="let l of selectedOrder.orderLines" class="order-line-admin">
+      <div class="admin-order-imgs">
+        <img
+          [src]="l.productImageUrl ? getFullImageUrl(l.productImageUrl) : 'assets/logo.png'"
+          class="order-img-main"
+          alt="Product" />
+      </div>
+
+      <div class="admin-order-details">
+        <div class="line-header"><b>{{ l.productName }}</b> <span class="muted">× {{ l.quantity }}</span></div>
+
+        <div *ngIf="hasCustomText(l)" class="custom-text">“{{ l.customText }}”</div>
+
+        <div *ngIf="showStyleMeta(l)" class="custom-meta">
+          <span *ngIf="l.font">Font: {{ l.font }}</span>
+          <span *ngIf="l.fontSize">, Size: {{ l.fontSize }}</span>
+          <span *ngIf="l.color">, Color: <span class="color-box" [style.background]="l.color"></span></span>
+        </div>
+
+        <div class="line-imgs-bottom">
+          <ng-container *ngIf="l.uploadedImagePath">
+            <img
+              [src]="getFullImageUrl(l.uploadedImagePath!)"
+              class="order-img-custom"
+              (click)="openModalImage(getFullImageUrl(l.uploadedImagePath!))" />
+            <button
+              class="download-btn"
+              (click)="downloadImage(getFullImageUrl(l.uploadedImagePath!), l.productName + '_custom')">
+              <svg width="20" height="20" fill="none" stroke="#e91e63" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12l7 7 7-7"></path>
+              </svg>
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="l.snapshotPath">
+            <img
+              [src]="getFullImageUrl(l.snapshotPath!)"
+              class="order-img-custom"
+              (click)="openModalImage(getFullImageUrl(l.snapshotPath!))" />
+            <button
+              class="download-btn"
+              (click)="downloadImage(getFullImageUrl(l.snapshotPath!), l.productName + '_snapshot')">
+              <svg width="20" height="20" fill="none" stroke="#e91e63" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12l7 7 7-7"></path>
+              </svg>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button (click)="closeOrderModal()" class="btn soft">Close</button>
+    </div>
+
+    <confirm-dialog *ngIf="confirmingStatus" [message]="confirmMessage" (confirm)="onStatusConfirmed()" (cancel)="onStatusCanceled()"></confirm-dialog>
+    <confirm-dialog *ngIf="confirmingDelivery" [message]="confirmMessage" (confirm)="onDeliveryConfirmed()" (cancel)="onDeliveryCanceled()"></confirm-dialog>
+
+    <div *ngIf="modalPopupImage" class="img-overlay" (click)="closeModalImage()" role="dialog" aria-modal="true">
+      <div class="img-card" (click)="$event.stopPropagation()">
+        <button class="img-close" (click)="closeModalImage()" aria-label="Close">&times;</button>
+        <img class="img-figure" [src]="modalPopupImage" alt="Preview" />
+        <button class="img-download" (click)="downloadImage(modalPopupImage!, 'order-image')">Download</button>
+      </div>
+    </div>
+  </div>
+</div>

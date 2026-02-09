@@ -1,0 +1,23 @@
+@use '../../../styles/variables' as *;
+
+.footer {
+  background: $black;
+  color: $primary-pink;
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto; // makes footer stick to bottom when content is short
+
+  .socials {
+    margin-top: 0.5rem;
+
+    a {
+      color: $primary-pink;
+      text-decoration: none;
+      margin: 0 0.5rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

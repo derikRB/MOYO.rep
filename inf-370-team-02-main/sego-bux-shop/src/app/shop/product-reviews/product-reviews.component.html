@@ -1,0 +1,54 @@
+<div class="product-reviews">
+  <h3>Customer Reviews</h3>
+
+  <!-- Reviews with title/text/photo -->
+  <div class="review-card" *ngFor="let r of reviews">
+    <div class="review-header">
+      <span class="reviewer">{{ r.userName }}</span>
+      <span class="stars">
+        <ng-container *ngFor="let star of [1,2,3,4,5]">
+          <i class="fa" [class.fa-star]="star <= r.rating" [class.fa-star-o]="star > r.rating"></i>
+        </ng-container>
+      </span>
+      <span class="date">{{ r.submittedDate | date:'shortDate' }}</span>
+    </div>
+    <div class="review-body">
+      <div *ngIf="r.reviewTitle" class="review-title"><b>{{ r.reviewTitle }}</b></div>
+      <div class="review-text">{{ r.reviewText }}</div>
+      <img *ngIf="r.photoUrl"
+           [src]="getFullPhotoUrl(r.photoUrl)"
+           class="review-photo"
+           alt="Review photo" />
+    </div>
+  </div>
+
+  <!-- NEW: plain order feedback (comments + rating + recommend) -->
+  <!-- <ng-container *ngIf="feedbacks?.length">
+    <h3 style="margin-top: 1.5rem;">Customer Feedback</h3>
+
+    <div class="review-card" *ngFor="let f of feedbacks">
+      <div class="review-header">
+        <span class="reviewer">Order #{{ f.orderID }}</span>
+        <span class="stars">
+          <ng-container *ngFor="let s of [1,2,3,4,5]">
+            <i class="fa" [class.fa-star]="s <= f.rating" [class.fa-star-o]="s > f.rating"></i>
+          </ng-container>
+        </span>
+        <span class="date">{{ f.submittedDate | date:'shortDate' }}</span>
+      </div>
+
+      <div class="review-body">
+        <div class="review-text">{{ f.comments }}</div>
+
+        <div class="recommend" *ngIf="f.recommend !== null">
+          <i class="fa" [class.fa-thumbs-up]="f.recommend" [class.fa-thumbs-o-down]="!f.recommend"></i>
+          <span>{{ f.recommend ? 'Would recommend' : 'Would not recommend' }}</span>
+        </div>
+      </div>
+    </div>
+  </ng-container> -->
+
+  <div *ngIf="!reviews.length && !feedbacks.length && !loading" class="empty">
+    No customer reviews or feedback yet.
+  </div>
+</div>

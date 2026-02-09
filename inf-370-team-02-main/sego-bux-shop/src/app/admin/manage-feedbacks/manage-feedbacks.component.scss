@@ -1,0 +1,119 @@
+@use "sass:color";
+@use '../../../styles/variables' as *;
+
+.manage-feedbacks{
+  padding:1.5rem; background:#fff; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,.09);
+  max-width:1150px; margin:auto;
+
+  h2{ color:$primary-pink; text-align:center; margin-bottom:1.3rem; font-size:2rem; font-weight:800; }
+
+  /* ---- PINK TOOLBAR (search + Clear + Export) ---- */
+  .controls{
+    display:flex; flex-direction:column; gap:.8rem; margin-bottom:1rem;
+
+    .fb-toolbar{
+      display:flex; gap:.75rem; align-items:center; justify-content:space-between;
+      .left{ flex:1 1 auto; }
+      .right{ flex:0 0 auto; display:flex; gap:.55rem; }
+
+      .search-input{
+        width:100%; padding:.9rem 1.1rem; border-radius:14px;
+        border:1.6px solid #ffe4f1; background:#fef6fb; outline:none; font-size:1rem;
+        box-shadow:0 2px 8px #e91e6314 inset;
+        &::placeholder{ color:#9a8b96; }
+        &:focus{ border-color:$primary-pink; background:#fff; box-shadow:0 0 0 3px #ffe4f1; }
+      }
+
+      .clear-btn{
+        border:none; border-radius:12px; padding:.65rem 1.0rem;
+        background:#f6edf4; color:#222; font-weight:800;
+        box-shadow:0 2px 6px rgba(233,30,99,.12);
+        cursor:pointer; transition:background-color .18s;
+        &:hover{ background: color.adjust(#f6edf4, $lightness:-6%); }
+      }
+      .export-btn{
+        border:none; border-radius:12px; padding:.65rem 1.0rem;
+        background:$primary-pink; color:#fff; font-weight:800; cursor:pointer;
+        &:hover{ background:color.adjust($primary-pink, $lightness:-10%); }
+      }
+    }
+
+    /* Filter chips row */
+    .filters{ display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+    .filter{ display:flex; align-items:center; gap:.6rem;
+      label{ font-weight:700; color:$primary-pink; }
+      .btns{ display:flex; gap:.4rem; }
+      .btns button{
+        border:none; background:#fde5f8; color:$primary-pink; font-weight:700; border-radius:8px; padding:.45em .9em; cursor:pointer;
+        &.active,&:hover{ background:$primary-pink; color:#fff; }
+      }
+    }
+  }
+
+  /* === SINGLE HORIZONTAL SCROLLER (wrapper only) === */
+  .scroll-wrap{
+    display:block; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling: touch;
+    border-radius:10px; box-shadow:0 4px 18px #e91e6340; scrollbar-gutter: stable both-edges; padding-bottom:2px;
+  }
+
+  /* === TABLE GRID (never stacks) === */
+  .grid-row{
+    display:grid !important; align-items:center; padding:0 1.1rem; min-height:52px; column-gap:12px;
+    width:max-content; min-width:unset;
+    grid-template-columns:
+      94px
+      minmax(180px, 1.4fr)
+      minmax(110px, 0.9fr)
+      128px
+      128px
+      minmax(170px, 1.1fr)
+      minmax(260px, 2.2fr);
+  }
+
+  .table.header{
+    background:#e91e63; color:#fff; font-weight:700; font-size:1.06rem;
+    .cell{ padding:14px 0; white-space:nowrap; }
+  }
+
+  .table.row{
+    border-bottom:1px solid #f7d4e5; transition:background .15s; background:#fff;
+    &:hover{ background:#fff2fa; }
+
+    overflow:visible !important; width:max-content;
+
+    .cell{
+      padding:10px 0; font-size:1.01rem; min-width:0;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+
+    .cell.comment{
+      white-space:normal; overflow:hidden; text-overflow:ellipsis;
+      display:-webkit-box; -webkit-box-orient:vertical;
+      line-clamp:2; -webkit-line-clamp:2; overflow-wrap:anywhere;
+    }
+
+    .stars{
+      white-space:nowrap; line-height:1;
+      i{ font-size:1.1em; margin-right:3px; color:#e91e63; }
+      .faded{ opacity:.28; }
+    }
+    .pill{ padding:.23em .9em; border-radius:999px; font-weight:700; font-size:.95em; white-space:nowrap;
+      &.yes{ background:#e0f7e7; color:#0b9667; }
+      &.no{  background:#fbe9e7; color:#c62828; } }
+  }
+
+  .no-data{ text-align:center; color:$primary-pink; font-size:1.1rem; font-weight:600; margin:1.2rem 0; }
+
+  .pager{
+    display:flex; gap:.6rem; align-items:center; justify-content:center; margin-top:1.2rem;
+    .page-btn{
+      border:1.5px solid #ff7aa9; background:#fff; color:#e91e63; border-radius:10px; padding:.55em 1.0em; font-weight:700;
+      &.active{ background:#e91e63; color:#fff; }
+      &:disabled{ opacity:.45; cursor:not-allowed; }
+    }
+  }
+}
+
+/* Belt-and-suspenders */
+.manage-feedbacks .table.header,
+.manage-feedbacks .table.row{ display:grid !important; }

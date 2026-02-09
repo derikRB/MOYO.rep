@@ -1,0 +1,105 @@
+@use "sass:color";
+@use '../../../styles/variables' as *;
+
+// pull the toast-container z‑index out to global host
+:host ::ng-deep .toast-container {
+  z-index: 3001 !important;
+}
+
+.low-stock-alerts {
+  padding: 1.5rem;
+  background: $white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: 2rem auto;
+
+  h2 {
+    color: $primary-pink;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-secondary {
+    background: color.scale($primary-pink, $lightness: 85%);
+    border: 1px solid $primary-pink;
+    color: $primary-pink;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+    &:hover {
+      background: color.scale($primary-pink, $lightness: 75%);
+      color: $white;
+    }
+  }
+
+  .history-table {
+    background: $white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-top: 1.5rem;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+
+      thead {
+        background: $primary-pink;
+        th {
+          color: $white;
+          font-weight: 600;
+          padding: 0.9rem 1.2rem;
+          text-align: left;
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+        }
+      }
+
+      tbody {
+        tr {
+          transition: background 0.18s;
+          &:nth-child(even) {
+            background: color.scale($primary-pink, $lightness: 99%);
+          }
+          &:hover {
+            background: #fff2fa;
+          }
+          td {
+            padding: 0.9rem 1.2rem;
+            vertical-align: middle;
+            font-size: 1rem;
+
+            .btn-resolve {
+              background: $primary-pink;
+              border: none;
+              color: $white;
+              padding: 0.3rem 0.8rem;
+              border-radius: 4px;
+              font-size: 0.9rem;
+              cursor: pointer;
+              transition: background 0.2s;
+              &:hover {
+                background: color.adjust($primary-pink, $lightness: -15%);
+              }
+            }
+
+            .status-resolved {
+              color: color.adjust($primary-pink, $lightness: -30%);
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .no-alerts {
+    font-size: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+}

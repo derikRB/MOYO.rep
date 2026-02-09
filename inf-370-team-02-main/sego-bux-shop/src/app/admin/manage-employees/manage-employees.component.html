@@ -1,0 +1,166 @@
+<div class="manage-employees">
+  <h2>Manage Employees</h2>
+
+  <!-- SEARCH (pink rounded toolbar) -->
+  <div class="emp-toolbar">
+    <div class="left">
+      <input
+        class="search-input"
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChanged()"
+        placeholder="Search by username or email…" />
+    </div>
+    <div class="right">
+      <button class="clear-btn" type="button" (click)="searchTerm=''; onSearchChanged()">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <form class="employee-form"
+        #empForm="ngForm"
+        (ngSubmit)="submitRegisterForm(empForm)"
+        [class.was-submitted]="empSubmitted">
+
+    <div class="form-group">
+      <label for="emailOrUsername">Username or Email</label>
+      <input id="emailOrUsername"
+             name="emailOrUsername"
+             type="text"
+             [(ngModel)]="form.emailOrUsername"
+             required
+             #emailOrUsername="ngModel" />
+      <small class="field-error"
+             *ngIf="emailOrUsername.invalid && (emailOrUsername.touched || empSubmitted)">
+        Username or Email is required.
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password"
+             name="password"
+             type="password"
+             [(ngModel)]="form.password"
+             required minlength="6"
+             #password="ngModel" />
+      <small class="field-error"
+             *ngIf="password.invalid && (password.touched || empSubmitted)">
+        <span *ngIf="password.errors?.['required']">Password is required.</span>
+        <span *ngIf="password.errors?.['minlength']">Password must be at least 6 characters.</span>
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="empForm.invalid">Register Employee</button>
+    </div>
+  </form>
+
+  <hr />
+
+  <!-- EMPLOYEE TABLE -->
+  <div class="employees-table-container">
+    <div class="employees-table-header">
+      <div class="cell username">Username</div>
+      <div class="cell email">Email</div>
+      <div class="cell role">Role</div>
+      <div class="cell actions">Actions</div>
+    </div>
+
+    <div *ngFor="let e of employees | paginate:page:pageSize" class="employees-table-row">
+      <div class="cell username">{{ e.username }}</div>
+      <div class="cell email">{{ e.email }}</div>
+      <div class="cell role">{{ e.role }}</div>
+      <div class="cell actions">
+        <button type="button" class="icon-btn" title="Edit" (click)="setEdit(e)">
+          <svg width="22" height="22" fill="none" stroke="#e91e63" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 17.25V21h3.75l11-11.02-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+        <button type="button" class="icon-btn" title="Delete" (click)="promptDeleteEmployee(e)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e91e63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6 m3-3h4a2 2 0 0 1 2 2v1H7V5a2 2 0 0 1 2-2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-pagination
+    [page]="page"
+    [totalPages]="totalPages"
+    (pageChange)="page = $event">
+  </app-pagination>
+
+  <!-- EDIT EMPLOYEE FORM -->
+  <div *ngIf="editing" class="edit-form">
+    <h3>Edit Employee</h3>
+    <form #editFormRef="ngForm"
+          (ngSubmit)="submitEditForm(editFormRef)"
+          [class.was-submitted]="editSubmitted">
+
+      <div class="form-group">
+        <label for="edit-username">Username</label>
+        <input id="edit-username"
+               name="username"
+               [(ngModel)]="editForm.username"
+               required
+               #editUsername="ngModel" />
+        <small class="field-error"
+               *ngIf="editUsername.invalid && (editUsername.touched || editSubmitted)">
+          Username is required.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="edit-email">Email</label>
+        <input id="edit-email"
+               name="email"
+               type="email"
+               [(ngModel)]="editForm.email"
+               required
+               email
+               #editEmail="ngModel" />
+        <small class="field-error"
+               *ngIf="editEmail.invalid && (editEmail.touched || editSubmitted)">
+          <span *ngIf="editEmail.errors?.['required']">Email is required.</span>
+          <span *ngIf="editEmail.errors?.['email']">Invalid email address.</span>
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="edit-role">Role</label>
+        <select id="edit-role"
+                name="role"
+                [(ngModel)]="editForm.role"
+                required
+                #editRole="ngModel">
+          <option value="">Select Role</option>
+          <option value="Employee">Employee</option>
+          <option value="Admin">Admin</option>
+          <option value="Manager">Manager</option>
+        </select>
+        <small class="field-error"
+               *ngIf="editRole.invalid && (editRole.touched || editSubmitted)">
+          Role is required.
+        </small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="editFormRef.invalid">Save</button>
+        <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- DELETE CONFIRMATION -->
+  <confirm-dialog
+    *ngIf="confirmingDelete"
+    [message]="'Delete “' + (toDeleteEmployee?.username || toDeleteEmployee?.email) + '”?'"
+    (confirm)="onDeleteConfirmed()"
+    (cancel)="onDeleteCanceled()">
+  </confirm-dialog>
+</div>

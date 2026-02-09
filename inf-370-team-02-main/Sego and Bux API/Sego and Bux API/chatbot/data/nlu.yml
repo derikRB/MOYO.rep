@@ -1,0 +1,35 @@
+version: "3.1"
+nlu:
+- intent: faq_1003
+  examples: |
+    - whats the delivery time
+- intent: faq_1004
+  examples: |
+    - hye
+- intent: faq_2
+  examples: |
+    - How do I add text to my bottle?
+- intent: faq_3
+  examples: |
+    - What material is this made of?
+- intent: faq_1
+  examples: |
+    - Can I put my logo on the tumbler?
+- intent: faq_10
+  examples: |
+    - Can I order 200 items or more
+- intent: faq_4
+  examples: |
+    - How long until I get my order?
+- intent: faq_5
+  examples: |
+    - Do you ship internationally?
+- intent: faq_6
+  examples: |
+    - How do I clean my tumbler?
+- intent: faq_7
+  examples: |
+    - What payment methods do you accept?
+- intent: faq_8
+  examples: |
+    - Do you offer discounts on bulk orders?

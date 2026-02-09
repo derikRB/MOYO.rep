@@ -1,0 +1,24 @@
+<app-navbar></app-navbar>
+<app-toast-container></app-toast-container>
+
+<!-- Floating Help Button -->
+<button
+  (click)="showHelp = !showHelp"
+  class="help-btn"
+  [attr.aria-pressed]="showHelp"
+  aria-label="Toggle help"
+  title="System Help"
+>?</button>
+
+<app-help *ngIf="showHelp"></app-help>
+<app-session-banner></app-session-banner>
+
+<!-- MAIN CONTENT AREA -->
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<app-chatbot-widget></app-chatbot-widget>
+
+<!-- FOOTER -->
+<app-footer></app-footer>

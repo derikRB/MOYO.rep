@@ -1,0 +1,65 @@
+<!-- Fullscreen overlay on mobile -->
+<div class="sidebar-overlay" *ngIf="sidebarOpen && isMobile" (click)="close()"></div>
+
+<nav class="sidebar" [class.open]="sidebarOpen" [class.collapsed]="collapsed">
+  <div class="sidebar-header">
+    <img src="assets/logo.png" alt="Logo" class="logo" />
+    <span class="brand" *ngIf="!collapsed">Sego &nbsp;& Bux Admin</span>
+  </div>
+
+  <ul class="sidebar-nav">
+    <li *ngFor="let link of navLinks">
+      <ng-container *ngIf="link.children; else singleLink">
+        <a href="javascript:void(0)" class="parent-link" (click)="toggleSection(link.label)">
+          <i class="fas" [ngClass]="link.icon"></i>
+          <span class="label" *ngIf="!collapsed">{{ link.label }}</span>
+          <i class="fas fa-chevron-down expand-icon" [class.expanded]="isExpanded(link.label)"></i>
+        </a>
+        <ul class="child-nav" *ngIf="isExpanded(link.label) && !collapsed">
+          <li *ngFor="let child of link.children">
+            <a [routerLink]="child.route"
+               routerLinkActive="active"
+               [routerLinkActiveOptions]="{ exact: true }"
+               (click)="onLinkClick()">
+              <i class="fas" [ngClass]="child.icon"></i>
+              <span>{{ child.label }}</span>
+              <span *ngIf="child.badge && child.badge()" class="badge rounded-pill bg-danger ms-auto">
+                {{ child.badge() }}
+              </span>
+            </a>
+          </li>
+        </ul>
+      </ng-container>
+
+     <!-- src/app/components/admin-sidebar.component.html -->
+<!-- ... existing code ... -->
+<ng-template #singleLink>
+  <a [routerLink]="link.route"
+     routerLinkActive="active"
+     [routerLinkActiveOptions]="{ exact: true }"
+     (click)="onLinkClick()">
+    <i class="fas" [ngClass]="link.icon"></i>
+    <span class="label" *ngIf="!collapsed">{{ link.label }}</span>
+    <!-- ADD THIS: Pending orders badge -->
+    <span *ngIf="link.label === 'Orders' && pendingOrdersCount > 0 && !collapsed" 
+          class="badge rounded-pill bg-danger ms-auto">
+      {{ pendingOrdersCount }}
+    </span>
+    <!-- Keep existing low stock badge -->
+    <span *ngIf="link.label === 'Low-Stock Alerts' && lowStockCount > 0 && !collapsed"
+          class="badge rounded-pill bg-danger ms-auto">
+      {{ lowStockCount }}
+    </span>
+  </a>
+</ng-template>
+<!-- ... existing code ... -->
+    </li>
+  </ul>
+
+  <div class="sidebar-bottom">
+    <button class="logout-btn" (click)="logout()">
+      <i class="fas fa-sign-out-alt"></i>
+      <span *ngIf="!collapsed">Logout</span>
+    </button>
+  </div>
+</nav>

@@ -1,0 +1,135 @@
+<div class="stock-purchase">
+  <h2>Admin: Capture Stock Purchase</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-group">
+      <label for="supplierName">Supplier Name</label>
+      <input
+        id="supplierName"
+        class="form-control"
+        formControlName="supplierName"
+        placeholder="Enter supplier" />
+    </div>
+
+    <div formArrayName="lines">
+      <div
+        *ngFor="let grp of lines.controls; let i = index"
+        [formGroupName]="i"
+        class="line-item"
+      >
+        <div>
+          <label>Product</label>
+          <select class="form-control" formControlName="productId">
+            <option [ngValue]="null">-- Select product --</option>
+            <option *ngFor="let p of products" [ngValue]="p.productID">
+              {{ p.name }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label>Quantity</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="quantity" />
+          <div
+            *ngIf="grp.get('quantity')!.touched && grp.get('quantity')!.invalid"
+            class="text-danger small"
+          >
+            <div *ngIf="grp.get('quantity')!.errors?.['required']">
+              Quantity is required.
+            </div>
+            <div *ngIf="grp.get('quantity')!.errors?.['min']">
+              Minimum is 1.
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label>Unit Price</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="unitPrice" />
+          <div
+            *ngIf="grp.get('unitPrice')!.touched && grp.get('unitPrice')!.invalid"
+            class="text-danger small"
+          >
+            <div *ngIf="grp.get('unitPrice')!.errors?.['required']">
+              Unit price is required.
+            </div>
+            <div *ngIf="grp.get('unitPrice')!.errors?.['min']">
+              Cannot be negative.
+            </div>
+          </div>
+        </div>
+
+        <div class="remove-btn">
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="removeLine(i)"
+          >
+            − Remove Line
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-link"
+      (click)="addLine()"
+    >
+      ＋ Add Another Line
+    </button>
+
+    <div class="mt-4">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="form.invalid"
+      >
+        Save Purchase
+      </button>
+    </div>
+  </form>
+
+  <hr>
+
+  <h3>Purchase History</h3>
+  <div class="history-table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Supplier</th>
+          <th>Date</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of purchases">
+          <td>{{ p.stockPurchaseId }}</td>
+          <td>{{ p.supplierName }}</td>
+          <td>{{ p.purchaseDate | date:'short' }}</td>
+          <td>
+            <ul class="mb-0 ps-3">
+              <li *ngFor="let l of p.lines">
+  {{ l.productName }} — {{ l.quantity }} &#64;
+  {{ l.unitPrice | currency:'R':'symbol':'1.2-2' }}
+</li>
+
+            </ul>
+          </td>
+        </tr>
+        <tr *ngIf="!purchases.length">
+          <td colspan="4" class="text-center text-muted">
+            No stock purchases recorded yet.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,198 @@
+@use "sass:color";
+@use '../../../styles/variables' as *;
+
+.faq-manager {
+  padding: 1.5rem;
+  background: $white;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  max-width: 900px;
+  margin: 2rem auto;
+
+  h2 {
+    color: $primary-pink;
+    font-size: 1.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  form {
+    .form-group {
+      margin-bottom: 1rem;
+      label {
+        font-weight: 500;
+        color: color.adjust($primary-pink, $lightness: -25%);
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+      select,
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.8rem 1.1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+        &:focus {
+          border-color: $primary-pink;
+          outline: none;
+        }
+      }
+    }
+
+    .mt-2 { margin-top: 0.6rem !important; }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+
+      .btn-pink {
+        background: $primary-pink;
+        color: $white;
+        border: none;
+        padding: 0.75rem 1.6rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background 0.22s;
+        &:hover:not(:disabled) {
+          background: color.adjust($primary-pink, $lightness: -15%);
+        }
+        &:disabled { opacity: 0.6; }
+      }
+
+      .btn-grey {
+        background: $grey-bg;
+        color: $black;
+        border: none;
+        padding: 0.75rem 1.6rem;
+        border-radius: 8px;
+        transition: background 0.22s;
+        &:hover { background: color.adjust($grey-bg, $lightness: -8%); }
+      }
+    }
+  }
+
+  hr.my-4 {
+    border: none;
+    border-top: 1px solid $grey-bg;
+    margin: 2rem 0;
+  }
+
+  .btn-pink {
+    @extend .btn-pink;
+    margin-bottom: 1rem;
+  }
+
+  .btn-outline-success {
+    display: none;
+  }
+
+  /* TABLE STYLING */
+  .faq-table-container {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(233,30,99,0.15);
+
+    .faq-table-header,
+    .faq-table-row {
+      display: grid;
+      grid-template-columns: 0.8fr 1fr 2.5fr 3fr 1fr;
+      align-items: center;
+      padding: 0 1.5rem;
+      min-height: 56px;
+    }
+
+    .faq-table-header {
+      background: $primary-pink;
+      color: $white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      .cell { padding: 18px 0 10px; }
+    }
+
+    .faq-table-row {
+      background: $white;
+      border-bottom: 1px solid #fae6f0;
+      transition: background 0.2s;
+
+      &.striped { background: color.scale($primary-pink, $lightness: 97%); }
+      &:hover { background: #fff2fa; }
+
+      .cell {
+        padding: 14px 0;
+        font-size: 1rem;
+        overflow-wrap: break-word;
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.8rem;
+      }
+
+      .icon-btn {
+        background: none;
+        border: none;
+        padding: 6px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+
+        .svg-icon {
+          width: 20px;
+          height: 20px;
+          fill: $primary-pink;
+        }
+
+        &:hover {
+          background: color.scale($primary-pink, $lightness: 92%);
+          transform: scale(1.1);
+        }
+      }
+
+      &.empty .cell {
+        grid-column: span 5;
+        text-align: center;
+        color: #777;
+        font-style: italic;
+      }
+    }
+  }
+
+  /* PAGINATION */
+  .pagination-controls {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+
+    .btn-page {
+      border: 1px solid $primary-pink;
+      background: $white;
+      color: $primary-pink;
+      padding: 0.55rem 0.9rem;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      &:hover:not(:disabled) {
+        background: color.scale($primary-pink, $lightness: 95%);
+      }
+      &.active {
+        background: $primary-pink;
+        color: $white;
+      }
+      &:disabled {
+        border-color: #ccc;
+        color: #ccc;
+        cursor: default;
+      }
+    }
+
+    .prev, .next {
+      min-width: 60px;
+    }
+  }
+}

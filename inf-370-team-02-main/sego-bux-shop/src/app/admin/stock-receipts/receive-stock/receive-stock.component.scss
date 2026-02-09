@@ -1,0 +1,173 @@
+@use "sass:color";
+@use '../../../../styles/variables' as *;
+
+.receive-stock {
+  padding: 1.5rem;
+  background: $white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: 2rem auto;
+
+  h2 {
+    color: $primary-pink;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  form {
+    .form-group {
+      margin-bottom: 1.2rem;
+      label {
+        display: block;
+        margin-bottom: 0.4rem;
+        font-weight: 500;
+        color: color.adjust($primary-pink, $lightness: -20%);
+      }
+      select,
+      input {
+        width: 100%;
+        padding: 0.7rem 1.1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+        &:focus {
+          border-color: $primary-pink;
+          outline: none;
+        }
+      }
+    }
+
+    .line-item {
+      background: color.scale($primary-pink, $lightness: 97%);
+      border: 1px solid color.adjust($primary-pink, $lightness: -30%);
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 1.2rem;
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 1rem;
+
+      label {
+        margin-bottom: 0.25rem;
+        font-size: 0.92rem;
+        font-weight: 500;
+      }
+
+      input[readonly] {
+        background: #f9f9f9;
+        color: #555;
+      }
+    }
+
+    .btn-primary {
+      background: $primary-pink;
+      border: none;
+      color: $white;
+      padding: 0.8rem 1.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.22s;
+      &:hover:not(:disabled) {
+        background: color.adjust($primary-pink, $lightness: -20%);
+      }
+      &:disabled {
+        background: $grey-bg;
+        color: #aaa;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid $grey-bg;
+    margin: 2rem 0;
+  }
+
+  h3 {
+    color: $primary-pink;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .history-table {
+    background: $white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-top: 1.5rem;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
+        background: $primary-pink;
+        th {
+          color: $white;
+          font-weight: 600;
+          padding: 0.9rem 1.2rem;
+          text-align: left;
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+        }
+      }
+
+      tbody {
+        tr {
+          transition: background 0.18s;
+          &:nth-child(even) {
+            background: color.scale($primary-pink, $lightness: 99%);
+          }
+          &:hover {
+            background: #fff2fa;
+          }
+          td {
+            padding: 0.9rem 1.2rem;
+            vertical-align: top;
+            font-size: 1rem;
+            &:first-child {
+              font-weight: 600;
+              color: $primary-pink;
+            }
+            ul {
+              margin: 0;
+              padding-left: 1.2rem;
+              list-style-type: disc;
+              color: #333;
+            }
+            &.text-center.text-muted {
+              font-style: italic;
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+/* Mirrors the first screen’s invalid styling */
+.line-item {
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background: #fff;
+}
+
+.line-item.invalid {
+  background: #fff6f9;              /* soft pink */
+  border-color: #d4145a;             /* brand pink/red */
+}
+
+.line-item > div {
+  margin-bottom: .5rem;
+}
+
+.text-danger.small {
+  margin-top: .25rem;
+}

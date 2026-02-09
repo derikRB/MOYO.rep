@@ -1,0 +1,46 @@
+.pay-product-page {
+  max-width: 600px;
+  margin: 3rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 18px #ffe1f5;
+
+  h2 {
+    color: #e60073;
+    font-size: 1.9rem;
+    margin-bottom: 1rem;
+  }
+
+  img {
+    margin: 1rem 0;
+    border-radius: 12px;
+  }
+
+  .form-control {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #ffd6f5;
+  }
+
+  .pay-btn {
+    padding: 0.9rem 1.8rem;
+    background: #e60073;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  .success-msg {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    color: green;
+    font-weight: 600;
+  }
+}

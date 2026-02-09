@@ -1,0 +1,120 @@
+<div class="manage-templates">
+  <h2>Manage Templates</h2>
+
+  <!-- Pink search toolbar -->
+  <div class="tpl-toolbar">
+    <div class="left">
+      <input
+        class="search-input"
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChanged()"
+        placeholder="Search by name or assigned products…" />
+    </div>
+    <div class="right">
+      <button class="clear-btn" type="button" (click)="searchTerm=''; onSearchChanged()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Templates Table -->
+  <div class="templates-table-container">
+    <div class="templates-table-header">
+      <div class="cell name">Name</div>
+      <div class="cell products"></div>
+      <div class="cell actions">Actions</div>
+    </div>
+
+    <div *ngFor="let t of filteredTemplates | paginate:page:pageSize"
+         class="templates-table-row">
+      <div class="cell name">{{ t.name }}</div>
+      <div class="cell products">{{ t.assignedNames }}</div>
+      <div class="cell actions">
+        <button type="button"
+                class="icon-btn"
+                title="Edit"
+                (click)="startEdit(t)">
+          <svg width="22" height="22" fill="none" stroke="#e91e63"
+               stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 17.25V21h3.75l11-11.02-3.75-3.75L3 17.25z
+                     M20.71 7.04c.39-.39.39-1.02 0-1.41
+                     l-2.34-2.34a.9959.9959 0 0 0-1.41 0
+                     l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+
+        <button type="button"
+                class="icon-btn"
+                title="Delete"
+                (click)="promptDelete(t)">
+          <svg width="22" height="22" viewBox="0 0 24 24"
+               fill="none" stroke="#e91e63" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
+                     m3-3h4a2 2 0 0 1 2 2v1H7V5a2 2 0 0 1 2-2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-pagination
+    [page]="page"
+    [totalPages]="totalPages"
+    (pageChange)="page = $event">
+  </app-pagination>
+
+  <confirm-dialog
+    *ngIf="confirmingDelete"
+    [message]="'Delete “' + toDelete?.name + '”?'"
+    (confirm)="onDeleteConfirmed()"
+    (cancel)="onDeleteCanceled()">
+  </confirm-dialog>
+
+  <hr class="divider" />
+
+  <!-- anchor for smooth scroll -->
+  <span #tplFormTop></span>
+
+  <!-- Template Create/Edit Form -->
+  <div class="template-form-card">
+    <h3 class="form-title">{{ editing ? 'Edit' : 'Create' }} Template</h3>
+    <form [formGroup]="form" (ngSubmit)="save()" autocomplete="off" novalidate>
+      <div class="form-row">
+        <label>Name</label>
+        <input formControlName="name" class="input" placeholder="Template name" />
+        <small class="field-error"
+               *ngIf="form.get('name')?.invalid && (form.get('name')?.touched || submitted)">
+          Template name is required.
+        </small>
+      </div>
+
+      <div class="form-row">
+        <label>File</label>
+        <input type="file" (change)="onFileChange($event)" class="input" />
+      </div>
+
+      <div class="form-row">
+        <label>Assign to Products</label>
+        <select formControlName="productIDs" multiple class="input">
+          <option *ngFor="let p of products" [value]="p.productID">
+            {{ p.name }}
+          </option>
+        </select>
+        <small class="field-error"
+               *ngIf="form.get('productIDs')?.invalid && (form.get('productIDs')?.touched || submitted)">
+          Please select at least one product.
+        </small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-blue">
+          {{ editing ? 'Update' : 'Create' }}
+        </button>
+        <button *ngIf="editing" type="button" class="btn btn-grey" (click)="startCreate()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

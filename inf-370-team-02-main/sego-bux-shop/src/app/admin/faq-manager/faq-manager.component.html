@@ -1,0 +1,150 @@
+<div class="faq-manager">
+  <h2>Manage FAQs</h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <input formControlName="faqId" type="hidden" />
+
+    <div class="form-group">
+      <label>Category</label>
+      <select formControlName="category" class="form-control" required>
+        <option [ngValue]="''" disabled>-- select category --</option>
+        <option *ngFor="let c of categories" [ngValue]="c">{{ c }}</option>
+      </select>
+    </div>
+
+    <div class="form-group mt-2">
+      <label>Question</label>
+      <input formControlName="questionVariant" class="form-control" required />
+    </div>
+
+    <div class="form-group mt-2">
+      <label>Answer</label>
+      <textarea
+        formControlName="answer"
+        class="form-control"
+        rows="3"
+        required
+      ></textarea>
+    </div>
+
+    <div class="form-group mt-2">
+      <label>Sort Order</label>
+      <input
+        formControlName="sortOrder"
+        type="number"
+        class="form-control"
+        min="1"
+        required
+      />
+      <div
+        *ngIf="form.get('sortOrder')?.hasError('min')"
+        class="text-danger small"
+      >
+        Must be at least 1.
+      </div>
+    </div>
+
+    <div class="form-actions mt-3">
+      <button class="btn-pink me-2" type="submit" [disabled]="form.invalid">
+        {{ editing ? 'Update' : 'Add' }}
+      </button>
+      <button class="btn-grey" type="button" (click)="cancel()">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <hr class="my-4" />
+
+  <div class="header-actions">
+    <button class="btn-pink export-btn mb-3" (click)="exportToChatbot()" type="button">
+      Export FAQs to Chatbot
+    </button>
+
+    <div class="filter-group mb-3">
+      <label>Filter by Category</label>
+      <select
+        class="form-control filter-select"
+        [(ngModel)]="selectedCategory"
+        (ngModelChange)="onCategoryFilterChange()"
+      >
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="faq-table-container">
+    <div class="faq-table-header">
+      <div class="cell">Order</div>
+      <div class="cell">Category</div>
+      <div class="cell question">Question</div>
+      <div class="cell answer">Answer</div>
+      <div class="cell actions">Actions</div>
+    </div>
+
+    <div
+      class="faq-table-row"
+      *ngFor="let f of pagedFaqs; let i = index"
+      [class.striped]="i % 2 === 1"
+    >
+      <div class="cell">{{ f.sortOrder }}</div>
+      <div class="cell">{{ f.category }}</div>
+      <div class="cell question">{{ f.questionVariant }}</div>
+      <div class="cell answer">{{ f.answer }}</div>
+      <div class="cell actions">
+        <button class="icon-btn" aria-label="Edit FAQ" (click)="edit(f)">
+          <svg width="22" height="22" fill="none" stroke="#e91e63" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 17.25V21h3.75l11-11.02-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Delete FAQ" (click)="promptDelete(f.faqId)">
+         <svg width="22" height="22" viewBox="0 0 24 24"
+               fill="none" stroke="#e91e63" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
+                     m3-3h4a2 2 0 0 1 2 2v1H7V5a2 2 0 0 1 2-2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="faq-table-row empty" *ngIf="!pagedFaqs.length">
+      <div class="cell" colspan="5">No FAQs to display.</div>
+    </div>
+  </div>
+
+  <div class="pagination-controls" *ngIf="totalPages > 1">
+    <button
+      class="btn-page prev"
+      [disabled]="currentPage === 1"
+      (click)="currentPage = currentPage - 1"
+    >
+      Prev
+    </button>
+
+    <button
+      class="btn-page"
+      *ngFor="let _ of pages; let idx = index"
+      [class.active]="currentPage === idx + 1"
+      (click)="currentPage = idx + 1"
+    >
+      {{ idx + 1 }}
+    </button>
+
+    <button
+      class="btn-page next"
+      [disabled]="currentPage === totalPages"
+      (click)="currentPage = currentPage + 1"
+    >
+      Next
+    </button>
+  </div>
+
+  <confirm-dialog
+    *ngIf="confirmingDelete"
+    [message]="'Delete FAQ #' + toDeleteId + '?'"
+    (confirm)="onDeleteConfirmed()"
+    (cancel)="onDeleteCanceled()"
+  ></confirm-dialog>
+</div>

@@ -1,0 +1,91 @@
+@use "sass:color";
+@use '../styles/variables' as *;
+
+.profile-layout-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.left-profile {
+  flex: 1 1 350px;
+  background: $grey-bg;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+
+  h2, h3 { color: $primary-pink; text-align: center; margin-bottom: 1.2rem; }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+
+    label { font-weight: 600; color: $black; }
+
+    .form-control {
+      width: 100%;
+      padding: .7rem 1rem;
+      border: 1px solid #e6e6e6;
+      border-radius: 8px;
+      background: #eef4ff;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-pink;
+        box-shadow: 0 0 0 3px rgba(233,30,99,.12);
+      }
+      &.is-invalid {
+        border-color: #f199a9;
+        box-shadow: 0 0 0 3px rgba(233,30,99,.12);
+      }
+    }
+
+    .field-error {
+      display: block;
+      margin-top: .25rem;
+      color: $primary-pink;
+      font-weight: 700;
+      font-size: .9rem;
+    }
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 180px;
+    height: 48px;
+    padding: 0 24px;
+    border: none;
+    border-radius: 9999px;
+    background: $primary-pink;
+    color: $white;
+    font-weight: 800;
+    letter-spacing: .2px;
+    box-shadow: 0 12px 22px rgba(233,27,116,.28), 0 2px 6px rgba(0,0,0,.06);
+    transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease, opacity .2s ease;
+    margin-top: .4rem;
+
+    &:hover:enabled { transform: translateY(-1px); background: color.adjust($primary-pink, $lightness: -10%); }
+    &:active:enabled { transform: translateY(0); box-shadow: 0 6px 14px rgba(233,27,116,.26), 0 2px 6px rgba(0,0,0,.10); }
+    &:disabled { opacity: .65; cursor: not-allowed; box-shadow: none; }
+  }
+
+  .btn-danger-outline {
+    background: none;
+    border: 2px solid red;
+    padding: .6rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    color: red;
+    transition: background .2s;
+    width: 100%;
+    margin-top: .6rem;
+
+    &:hover { background: red; color: white; }
+  }
+
+  hr { margin: 1.6rem 0; }
+}

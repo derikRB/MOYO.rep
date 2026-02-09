@@ -1,0 +1,9 @@
+@use "sass:color";
+
+$primary-pink: #e91e63;
+$primary-blue: #2196f3;
+$white: #ffffff;
+$black: #000000;
+$grey-bg: #f7f7f7;
+
+$primary-pink-dark: color.adjust($primary-pink, $lightness: -10%);

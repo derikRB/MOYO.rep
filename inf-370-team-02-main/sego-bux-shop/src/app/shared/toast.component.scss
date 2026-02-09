@@ -1,0 +1,50 @@
+// /* src/app/shared/toast.component.scss */
+// @use '../../styles/variables' as *;
+
+// .toast {
+//   display: flex;
+//   align-items: center;
+//   background: $primary-pink;
+//   color: white;
+//   padding: 0.6rem 1rem;
+//   border-radius: 8px;
+//   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+//   max-width: 300px;
+//   animation: slideIn 0.3s ease-out;
+
+//   .thumb {
+//     width: 40px;
+//     height: 40px;
+//     object-fit: cover;
+//     border-radius: 4px;
+//     margin-right: 0.6rem;
+//     background: white;
+//   }
+
+//   .message {
+//     flex: 1;
+//     font-size: 0.9rem;
+//     line-height: 1.2;
+//   }
+
+//   .close-btn {
+//     background: transparent;
+//     border: none;
+//     color: white;
+//     font-size: 1.2rem;
+//     line-height: 1;
+//     cursor: pointer;
+//     margin-left: 0.5rem;
+//   }
+// }
+
+// @keyframes slideIn {
+//   from {
+//     transform: translateX(100%);
+//     opacity: 0;
+//   }
+//   to {
+//     transform: translateX(0);
+//     opacity: 1;
+//   }
+// }

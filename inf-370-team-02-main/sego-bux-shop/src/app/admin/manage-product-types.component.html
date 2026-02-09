@@ -1,0 +1,135 @@
+<div class="manage-product-types">
+  <h2>Manage Product Types</h2>
+
+  <!-- SEARCH BAR (pink rounded style) -->
+  <div class="types-toolbar">
+    <div class="left">
+      <input
+        class="search-input"
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChanged()"
+        placeholder="Search by type, description or category…" />
+    </div>
+    <div class="right">
+      <button class="clear-btn" type="button" (click)="searchTerm=''; onSearchChanged()">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <form
+    #formRef="ngForm"
+    (ngSubmit)="submitProductType(formRef)"
+    class="product-type-form"
+    [class.was-submitted]="ptSubmitted"
+  >
+    <div #ptFormContainer class="anchor"></div>
+
+    <div class="form-group">
+      <label for="productTypeName">Product Type Name</label>
+      <input id="productTypeName"
+             #ptNameInput
+             name="productTypeName"
+             type="text"
+             required
+             [(ngModel)]="form.productTypeName"
+             #productTypeName="ngModel" />
+      <small class="field-error"
+             *ngIf="productTypeName.invalid && (productTypeName.touched || ptSubmitted)">
+        Product type name is required.
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input id="description"
+             name="description"
+             type="text"
+             [(ngModel)]="form.description" />
+    </div>
+
+    <div class="form-group full-width">
+      <label for="categoryID">Category</label>
+      <select id="categoryID"
+              name="categoryID"
+              required
+              [(ngModel)]="form.categoryID"
+              #categoryID="ngModel">
+        <option [ngValue]="null" disabled>-- Select a Category --</option>
+        <option *ngFor="let c of categories" [ngValue]="c.categoryID">
+          {{ c.categoryName }}
+        </option>
+      </select>
+      <small class="field-error"
+             *ngIf="categoryID.invalid && (categoryID.touched || ptSubmitted)">
+        Category is required.
+      </small>
+    </div>
+
+    <div class="form-actions full-width">
+      <button type="submit" [disabled]="formRef.invalid">
+        {{ isEditMode ? 'Update Product Type' : 'Add Product Type' }}
+      </button>
+      <button *ngIf="isEditMode"
+              type="button"
+              class="cancel-btn"
+              (click)="resetForm()">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <hr />
+
+  <div class="types-table-container">
+    <div class="types-table-header">
+      <div class="cell name">Product Type</div>
+      <div class="cell desc">Description</div>
+      <div class="cell cat">Category</div>
+      <div class="cell actions">Actions</div>
+    </div>
+
+    <div *ngFor="let pt of filteredProductTypes | paginate:page:pageSize; trackBy: trackByTypeId"
+         class="types-table-row">
+      <div class="cell name">{{ pt.productTypeName }}</div>
+      <div class="cell desc">{{ pt.description }}</div>
+      <div class="cell cat">{{ getCategoryName(pt.categoryID) }}</div>
+      <div class="cell actions">
+        <button type="button"
+                class="icon-btn"
+                title="Edit"
+                (click)="editProductType(pt)">
+          <svg width="22" height="22" fill="none" stroke="#e91e63" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 17.25V21h3.75l11-11.02-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+        <button type="button"
+                class="icon-btn"
+                title="Delete"
+                (click)="promptDeleteProductType(pt)">
+          <svg width="22" height="22" viewBox="0 0 24 24"
+               fill="none" stroke="#e91e63" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6
+                     m3-3h4a2 2 0 0 1 2 2v1H7V5a2 2 0 0 1 2-2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-pagination
+    [page]="page"
+    [totalPages]="totalPages"
+    (pageChange)="page = $event">
+  </app-pagination>
+
+  <confirm-dialog
+    *ngIf="confirmingDeleteType"
+    [message]="'Delete “' + toDeleteType?.productTypeName + '”?'"
+    (confirm)="onDeleteTypeConfirmed()"
+    (cancel)="onDeleteTypeCanceled()">
+  </confirm-dialog>
+</div>

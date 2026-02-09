@@ -1,0 +1,119 @@
+<div class="cart-container" id="invoice-section">
+  <h2 class="cart-title">My Cart</h2>
+  
+  <div *ngIf="cartItems.length > 0; else emptyCart">
+    <div class="cart-items">
+      <div class="cart-card" *ngFor="let item of cartItems">
+        <div class="cart-img-wrapper">
+          <img
+            [src]="item.imageUrl || 'assets/logo.png'"
+            alt="{{ item.name }}"
+            class="cart-img"
+          />
+        </div>
+        
+        <div class="cart-info">
+          <div class="cart-product-name">{{ item.name }}</div>
+          
+          <div *ngIf="item.customization" class="customization-info">
+            <small>Customized: {{ item.customization.customText }}</small>
+          </div>
+          
+          <div class="cart-qty-controls">
+            <button class="qty-btn" (click)="decreaseQuantity(item)">-</button>
+            <span class="qty">{{ item.quantity }}</span>
+            <button class="qty-btn" (click)="increaseQuantity(item)">+</button>
+          </div>
+        </div>
+        
+        <div class="cart-price">
+          {{ formatCurrency(item.price * item.quantity) }}
+        </div>
+        
+        <div class="cart-actions">
+          <button class="remove-btn" (click)="removeItem(item)">Remove</button>
+          <button class="customize-btn" (click)="openCustomizationModal(item)">
+            {{ item.customization ? 'Edit' : 'Customize' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary using VAT-from-gross (matches Checkout look) -->
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>SubTotal Excl :</span>
+        <span class="amount">{{ formatCurrency(getSubtotal()) }}</span>
+      </div>
+      
+      <div class="summary-row">
+        <span>VAT Amount ({{ vatRate }}%) :</span>
+        <span class="amount vat">{{ formatCurrency(getVAT()) }}</span>
+      </div>
+      
+      <div class="summary-row total-row">
+        <span>Total (incl. VAT) :</span>
+        <span class="amount total">{{ formatCurrency(getTotal()) }}</span>
+      </div>
+      
+      <!-- Order limit message -->
+      <div *ngIf="orderLimitExceeded" class="order-limit-message">
+        <div class="limit-icon">⚠️</div>
+        <div class="limit-text">
+          <strong>Large Order Detected</strong><br>
+          Your order contains {{ totalQuantity }} items, which exceeds our standard order limit of {{ orderLimit }} items.<br>
+          Please use our <a routerLink="/contact">contact form</a> to request a quotation or use the chat widget to speak directly with our team for bulk pricing.
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="checkout-btn"
+      (click)="goToCheckout()"
+      [disabled]="cartItems.length === 0 || orderLimitExceeded"
+    >
+      {{ orderLimitExceeded ? 'Order Limit Exceeded' : 'Proceed to Checkout' }}
+    </button>
+
+    <!-- You may also like carousel -->
+    <div class="recommend-carousel-container" *ngIf="recommendedProducts?.length">
+      <h3 class="carousel-title">You may also like</h3>
+      
+      <div class="carousel">
+        <div
+          class="carousel-card"
+          *ngFor="let rec of recommendedProducts | slice:0:10"
+        >
+          <img [src]="getImageUrl(rec)" alt="{{ rec.name }}" />
+          <div class="rec-title">{{ rec.name }}</div>
+          <div class="rec-price">R{{ rec.price }}</div>
+          <button class="add-btn" (click)="addToCart(rec)" [disabled]="orderLimitExceeded">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #emptyCart>
+    <div class="empty-cart-msg">
+      <svg width="110" height="110" viewBox="0 0 48 48" fill="none">
+        <rect x="6" y="12" width="36" height="20" rx="6" stroke="#e91e63" stroke-width="2.5" fill="#fff0f6"/>
+        <circle cx="16" cy="36" r="2.3" fill="#e91e63"/>
+        <circle cx="32" cy="36" r="2.3" fill="#e91e63"/>
+        <path d="M18 25c1.7 2 10.3 2 12 0" stroke="#e91e63" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <line x1="10" y1="18" x2="38" y2="18" stroke="#e91e63" stroke-width="2"/>
+      </svg>
+      <p>Your cart is empty. Start shopping now!</p>
+    </div>
+  </ng-template>
+
+  <!-- Customization Modal -->
+  <app-customization-modal
+    *ngIf="showCustomizationModal && customizingItem"
+    [product]="customizingItem"
+    (save)="onCustomizationSaved($event)"
+    (close)="closeCustomizationModal()"
+  >
+  </app-customization-modal>
+</div>

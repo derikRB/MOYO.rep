@@ -1,0 +1,56 @@
+@use '../../../styles/variables' as *;
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  min-width: 0;
+  width: 100vw;
+  background: #fff;
+}
+
+.admin-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  padding: 2rem 1rem 1rem 1rem;
+  background: #fff;
+  overflow-x: auto;
+  transition: margin-left .2s;
+  margin-left: 240px; /* sidebar width */
+}
+
+/* Match the class used in the template */
+.admin-content.sidebar-collapsed {
+  margin-left: 60px; /* collapsed sidebar width */
+}
+
+/* Mobile: content is full width, sidebar slides over it */
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 15px; left: 18px; z-index: 3200;
+  background: $primary-pink;
+  color: $white;
+  border: none;
+  padding: .5rem .8rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 900px) {
+  .sidebar-toggle { display: block; }
+
+  .admin-content,
+  .admin-content.sidebar-collapsed {
+    margin-left: 0 !important;
+    width: 100vw;
+  }
+}
+
+/* Overlay style reused here so it’s available from dashboard too */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  z-index: 2000;
+}
